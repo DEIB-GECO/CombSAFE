@@ -3,17 +3,13 @@
 
 # In[1]:
 
-
-#pyensembl install --release 97 --species homo_sapiens
-
-
 # In[2]:
 
 file_path = "./"
 bed_folder_path = "./"
-n_states = 12
-pool = ["H3K27me3", "POLR2A", "CTCF", "H3K4me3", "H3K27ac"]
-GMQL_output_dir = "./cost_of_fuel_output/"+ "_".join(pool) + "_pipeline/"
+n_states = 0
+pool = []
+GMQL_output_dir = "./"
 n_states_model = GMQL_output_dir + str(n_states) + "_state_model/"
 custom = True
 custom_name = ""
