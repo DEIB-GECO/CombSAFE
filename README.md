@@ -39,3 +39,17 @@ Returns:
 
 ```cost_of_fuel.get_semantic_annotation_list(semantic_df, ["H3K27ac", "H3K4me3", "H3K27me3", "H3K4me1", "H3K36me3"])```
 
+![alt text](https://drive.google.com/uc?export=download&id=1llQnJyeJku6evCgDaOymWuiIgCE5dYXO)
+
+
+### Select features and combine samples
+
+### [Optional] Add custom tracks
+
+### Identify Chromatin States
+
+### Single Gene Analysis
+
+### Whole Genome Analysis
+
+### [Optional] Semantic Analysis
