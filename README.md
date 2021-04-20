@@ -19,9 +19,9 @@ Parameters:
 
 ### Generate semantic annotations
 ```cost_of_fuel.generate_semantic_df(separator, encode_convert)```<br/>
-Parameters:
-* separator: str, default '\t'
-  * Delimiter to use
+Parameters: <br/>
+  separator: str, default '\t' <br/>
+Delimiter to use
 * encode_convert: bool, default False
   * If true, id encode IDs are searched to be converted to GSM <br/>
 Returns: 
@@ -44,11 +44,19 @@ Returns:
 
 ### Select features and combine samples
 
+```cost_of_fuel.run_gmql(["H3K27ac", "H3K4me3", "H3K27me3", "H3K4me1", "H3K36me3"])```
+
 ### [Optional] Add custom tracks
+
+```cost_of_fuel.run_gmqladd_custom_tracks(track_lable, path_to_custom_track, index)```
 
 ### Identify Chromatin States
 
+```cost_of_fuel.identify_chromatin_states(number_of_states, n_core)```
+
 ### Single Gene Analysis
+
+
 
 ### Whole Genome Analysis
 
