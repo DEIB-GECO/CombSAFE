@@ -6,9 +6,9 @@ This repository contains the implementation of the *Combinatorial and Semantic A
 Given as input a set of ChIP-seq dataset samples and the list of functional elements to be considered, the ```CombSAFE``` pipeline allows:
 - considering histone modifications, transcription factors and any other type of dynamic and static genomic features (e.g., CpG islands, partially methylated domains, transposable elements, etc.)
 - relying on public repositories to retrieve the considered static functional elements and identify from the input dataset metadata the biological conditions in which the dynamic functional elements of interest were charted
-- leveraging natural language processing techniques and biomedical ontologies to complement the identify conditions with semantic annotations about tissue and disease types
+- leveraging natural language processing techniques and biomedical ontologies to complement the identified conditions with semantic annotations about tissue and disease types
 - identifying combinations of static and dynamic functional elements  throughout the genome in the corresponding omics data using hidden Markov models 
-- focusing on specific genomic regions, applying clustering to explore how significant combinations of the functional elements compare among cell types and biological conditions 
+- focusing on specific genomic regions, applying clustering to explore how significant combinations of the functional elements compare among semantically annoted cell types and biological conditions 
 - performing functional enrichment analyses based on the genes found in genomic regions with similar combinations of functional elements.
 
 ## Cookbook
