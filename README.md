@@ -50,7 +50,7 @@ Returns:
 
 ```combsafe.add_custom_tracks(track_lable, path_to_custom_track, index)```
 
-### Identify Chromatin States
+### Identify Chromatin States <> NON USIAMO PIù QUESTO TERMINE MA FUNCTIONAL STATES -> MODIFICARE 
 
 ```combsafe.identify_chromatin_states(number_of_states, n_core)```
 
