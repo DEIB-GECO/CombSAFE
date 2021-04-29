@@ -54,10 +54,14 @@ Returns:
 
 ```combsafe.identify_chromatin_states(number_of_states, n_core)```
 
-### Single Gene Analysis
-
-
-
 ### Whole Genome Analysis
 
+...
+
+### Single Gene Analysis
+
+...
+
 ### [Optional] Semantic Analysis
+
+...
