@@ -2,13 +2,13 @@
 
 ## About
 This repository contains the implementation of the *Combinatorial and Semantic Analysis of Functional Elements* (CombSAFE) presented in: ```Leone M., Galeota E., Ceri S., Masseroli M., and Pellizzola M. "Identification, semantic annotation and comparison of regulatory functional element combinations in multiple biological conditions", 2021```. It is a flexible computational method to identify combinations of static and dynamic functional elements genome-wide, and how they change across semantically annotated biological conditions. 
-Given as input a set of ChIP-seq samples and the list of functional elements to be considered, the ```CombSAFE``` pipeline allows:
+Given as input a set of ChIP-seq dataset samples and the list of functional elements to be considered, the ```CombSAFE``` pipeline allows:
 
 - considering histone modifications, transcription factors and any other type of dynamic and static genomic features (e.g., CpG islands, partially methylated domains, transposable elements, etc.)
-- relying on public repositories to retrieve the considered Static functional elements and identify from their metadata the biological conditions in which the dynamic functional elements of interest were charted
-- identifying combinations throughout the genome of the corresponding omic data using hidden Markov models 
-- focusing on specific genomic regions, applying clustering to explore how significant combinations of the functional elements compare among cell types and conditions 
-- performing functional enrichment analyses based on the genes found in regions with similar combinations of functional elements.
+- relying on public repositories to retrieve the considered static functional elements and identify from the input input dataset metadata the biological conditions in which the dynamic functional elements of interest were charted
+- identifying combinations of static and dynamic functional elements  throughout the genome in the corresponding omics data using hidden Markov models 
+- focusing on specific genomic regions, applying clustering to explore how significant combinations of the functional elements compare among cell types and biological conditions 
+- performing functional enrichment analyses based on the genes found in genomic regions with similar combinations of functional elements.
 
 ## Cookbook
 
