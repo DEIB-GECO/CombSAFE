@@ -48,7 +48,7 @@ Returns:
 
 ### [Optional] Add custom tracks
 
-```combsafe.run_gmqladd_custom_tracks(track_lable, path_to_custom_track, index)```
+```combsafe.add_custom_tracks(track_lable, path_to_custom_track, index)```
 
 ### Identify Chromatin States
 
