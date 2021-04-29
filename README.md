@@ -29,7 +29,7 @@ Returns:
   - DataFrame or TextParser
     - A comma-separated values (csv) file is returned as two-dimensional data structure with labeled axes.
 
-### Data Analysis
+### Data analysis
 ```combsafe.plot_factor_freq(merged_df, n)```<br/>
 
 ![alt text](https://drive.google.com/uc?export=download&id=1WyFjK1eYM9nSbMKLht0dXp6ouscZ381P)
@@ -51,18 +51,18 @@ Returns:
 
 ```combsafe.add_custom_tracks(track_lable, path_to_custom_track, index)```
 
-### Identify Chromatin States <> NON USIAMO PIù QUESTO TERMINE MA FUNCTIONAL STATES -> MODIFICARE 
+### Identify chromatin states <> NON USIAMO PIù QUESTO TERMINE MA FUNCTIONAL STATES -> MODIFICARE 
 
 ```combsafe.identify_chromatin_states(number_of_states, n_core)```
 
-### Genome-wide Analysis
+### Genome-wide analysis
 
 ...
 
-### Single-Gene Analysis
+### Single-gene analysis
 
 ...
 
-### [Optional] Semantic Analysis
+### [Optional] Semantic analysis
 
 ...
