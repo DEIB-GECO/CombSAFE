@@ -36,28 +36,35 @@ Returns:
 
 ```combsafe.generate_fixed_factor_pool(semantic_df, ["CTCF", "MYC"], 5)```
 
-![alt text](https://drive.google.com/uc?export=download&id=1TD-wc-4rJ0DDagZebLu0BgFeLVJ8SwW0)
+![alt text](https://drive.google.com/uc?export=download&id=1Qc4W9vm2ekev_P13-56akRNpK_oY92BQ)
 
 ```combsafe.get_semantic_annotation_list(semantic_df, ["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])```
 
-![alt text](https://drive.google.com/uc?export=download&id=1Q0F8CzTSHIx-TpOW9b8PBnQ4QLD1t-SZ)
+![alt text](https://drive.google.com/uc?export=download&id=1llQnJyeJku6evCgDaOymWuiIgCE5dYXO)
 
 
 ### Select features and combine samples
 
-```combsafe.run_gmql(["H3K27ac", "H3K4me3", "H3K27me3", "H3K4me1", "H3K36me3"])```
+```combsafe.run_gmql(["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])```
 
 ### [Optional] Add custom tracks
 
 ```combsafe.add_custom_tracks(track_lable, path_to_custom_track, index)```
 
-### Identify chromatin states <> NON USIAMO PIù QUESTO TERMINE MA FUNCTIONAL STATES -> MODIFICARE 
+### Identify functional states 
 
-```combsafe.identify_chromatin_states(number_of_states, n_core)```
+```combsafe.identify_chromatin_states(number_of_states, n_core)```<br/>
+```combsafe.show_emission_graph(custom_palette=pool_3_palette)```
+![alt text](https://drive.google.com/uc?export=download&id=1Kk_vOm5wz_ski-fLvTxB48dhhu9TXcNY)
 
 ### Genome-wide analysis
 
-...
+```reducted_df = genome_reduction(full_df)```<br/>
+```data_driven_heatmap(reducted_df)```
+![alt text](https://drive.google.com/uc?export=download&id=1jbyS_WY54SfJtCWQhw9tpiYW8vC2QJ_Q)
+
+
+```gene_ontology_enrichment_analysis(clustered_heatmap, reducted_df, sig_cut_off= 0.05)```
 
 ### Single-gene analysis
 
