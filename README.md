@@ -34,13 +34,13 @@ Returns:
 
 ![alt text](https://drive.google.com/uc?export=download&id=1WyFjK1eYM9nSbMKLht0dXp6ouscZ381P)
 
-```combsafe.generate_fixed_factor_pool(semantic_df, ["H3K27ac", "H3K4me3", "H3K27me3"], 5)```
+```combsafe.generate_fixed_factor_pool(semantic_df, ["CTCF", "MYC"], 5)```
 
 ![alt text](https://drive.google.com/uc?export=download&id=1TD-wc-4rJ0DDagZebLu0BgFeLVJ8SwW0)
 
-```combsafe.get_semantic_annotation_list(semantic_df, ["H3K27ac", "H3K4me3", "H3K27me3", "H3K4me1", "H3K36me3"])```
+```combsafe.get_semantic_annotation_list(semantic_df, ["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])```
 
-![alt text](https://drive.google.com/uc?export=download&id=1llQnJyeJku6evCgDaOymWuiIgCE5dYXO)
+![alt text](https://drive.google.com/uc?export=download&id=1Q0F8CzTSHIx-TpOW9b8PBnQ4QLD1t-SZ)
 
 
 ### Select features and combine samples
