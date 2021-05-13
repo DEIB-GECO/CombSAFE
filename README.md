@@ -25,7 +25,7 @@ Parameters: <br/>
   separator: str, default '\t' <br/>
 Delimiter to use
 * encode_convert: bool, default False
-  * If true, id encode IDs are searched to be converted to GSM <br/>
+  * If true, encode IDs are searched to be converted to GSM <br/>
 Returns: 
   - DataFrame or TextParser
     - A comma-separated values (csv) file is returned as two-dimensional data structure with labeled axes.
