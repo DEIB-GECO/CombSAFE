@@ -28,7 +28,7 @@ Parameters: <br/>
   * If true, encode IDs are searched to be converted to GSM <br/>
 Returns: 
   - DataFrame or TextParser
-    - A comma-separated values (csv) file is returned as two-dimensional data structure with labeled axes.
+    - A comma-separated values (csv) file is returned as two-dimensional data structure with labeled axes
 
 ### Data analysis
 ```combsafe.plot_factor_freq(merged_df, n)```<br/>
