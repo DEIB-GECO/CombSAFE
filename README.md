@@ -12,7 +12,7 @@ Given as input a set of ChIP-seq dataset samples and the list of functional elem
 - performing functional enrichment analyses based on the genes found in genomic regions with similar combinations of functional elements.
 
 ## Cookbook
-In the following, we show how to call the implemented functions to easily perform the different steps of our computational method. 
+In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method. 
 
 ### Load input files
 ```combsafe.import_path(filepath)```<br/>
