@@ -21,8 +21,8 @@ Parameters:
 
 ### Generate semantic annotations
 ```combsafe.generate_semantic_df(separator, encode_convert)```<br/>
-Parameters: <br/>
-* separator: str, default '\t' <br/>
+Parameters:  
+separator: str, default '\t' <br/>
   * Delimiter to use
 * encode_convert: bool, default False
   * If true, encode IDs are searched to be converted to GSM
