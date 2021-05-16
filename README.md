@@ -65,7 +65,7 @@ Example:
 
 
 ```combsafe.generate_fixed_factor_pool(dataframe, factor_list, number_of_semantic_annotation)``` <br/>
-Table containg lists of factors according to the selected parameters.<br/>
+Table containg a list of factors according to the selected parameters.<br/>
 
 Parameters: 
 - ***dataframe***: dataframe
