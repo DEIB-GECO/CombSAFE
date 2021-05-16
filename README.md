@@ -16,7 +16,7 @@ In the following, we show how to call the functions implemented to easily perfor
 
 ### Load input files
 ```combsafe.import_path(filepath)```  
-Parameters:  *filepath*:#^  
+Parameters:  *filepath*:    
 path object or file-like object
 
 ### Generate semantic annotations
