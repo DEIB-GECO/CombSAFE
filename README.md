@@ -15,9 +15,8 @@ Given as input a set of ChIP-seq dataset samples and the list of functional elem
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
 
 ### Load input files
-```combsafe.import_path(filepath)```<br/>
-Parameters: 
-* filepath: path object or file-like object
+```combsafe.import_path(filepath)```  
+Parameters:  filepath: path object or file-like object
 
 ### Generate semantic annotations
 ```combsafe.generate_semantic_df(separator, encode_convert)```<br/>
