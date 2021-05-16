@@ -16,7 +16,7 @@ In the following, we show how to call the functions implemented to easily perfor
 
 ### Load input files
 ```combsafe.import_path(filepath)```<br/>
-Load the input path for the analysis<br/>
+Load the input path for the analysis.<br/>
 
 Parameters: 
 - ***filepath***: path object or file-like object 
@@ -28,10 +28,10 @@ Example:
 
 ### Generate semantic annotations
 ```combsafe.generate_semantic_df(separator, encode_convert)```<br/>
-Generate semantic annotations about tissue and disease types from the input dataset<br/>
+Generate semantic annotations about tissue and disease types from the input dataset.<br/>
 
 Parameters: 
-- ***sep***: str, default '\t'
+- ***separator***: str, default '\t'
   - Delimiter to use for the input .txt file
 - ***encode_convert***: bool, default False
   - If true, encode IDs are searched to be converted to GSM
@@ -47,13 +47,13 @@ Example:
 
 ### Data analysis
 ```combsafe.plot_factor_freq(dataframe, n)```<br/>
-Vertical barplot of the factor frequency in the input dataset<br/>
+Vertical barplot of the factor frequency in the input dataset.<br/>
 
 Parameters: 
 - ***dataframe***: str, default '\t'
   - Dataframe of semantic annotations
 - ***n***: int
-  - Number of Factor to diplay in the barplot
+  - Number of factors to diplay in the barplot
 
 Example:
 ```python
@@ -65,13 +65,13 @@ Example:
 
 
 ```combsafe.generate_fixed_factor_pool(dataframe, factor_list, number_of_semantic_annotation)``` <br/>
-Table containg lists of factors according to the selected parameters
+Table containg lists of factors according to the selected parameters.<br/>
 
 Parameters: 
 - ***dataframe***: dataframe
   - Dataframe of semantic annotations
 - ***factor_list***: list
-  - List of factor to include in the analysis
+  - List of factors to include in the analysis
 - ***number_of_semantic_annotation***: int
   - Number of semantic annotations to include in the analysis
 
