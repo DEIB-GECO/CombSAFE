@@ -20,11 +20,11 @@ Parameters:
 - *filepath*: path object or file-like object
 
 ### Generate semantic annotations
-```combsafe.generate_semantic_df(separator, encode_convert)```<br/>
+```combsafe.generate_semantic_df(separator, encode_convert)```<br/><br/>
 Parameters:  
-- *separator*: str, default '\t'
-  - Delimiter to use
-- *encode_convert*: bool, default False
+  ***separator***: str, default '\t'
+    Delimiter to use
+- ***encode_convert***: bool, default False
   - If true, encode IDs are searched to be converted to GSM
   
 Returns: 
