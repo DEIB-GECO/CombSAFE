@@ -15,28 +15,70 @@ Given as input a set of ChIP-seq dataset samples and the list of functional elem
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
 
 ### Load input files
-```combsafe.import_path(filepath)```  
-Parameters:  
-- *filepath*: path object or file-like object
+```combsafe.import_path(filepath)```<br/>
+Load the input path for the analysis<br/>
+
+Parameters: 
+- ***filepath***: path object or file-like object 
+
+Example:
+```python
+>> import_path("./path_to_files/")
+```
 
 ### Generate semantic annotations
 ```combsafe.generate_semantic_df(separator, encode_convert)```<br/>
-Parameters:\
-- ***separator***: str, default '\t'
-    Delimiter to use
+Generate semantic annotations about tissue and disease types from the input dataset<br/>
+
+Parameters: 
+- ***sep***: str, default '\t'
+  - Delimiter to use for the input .txt file
 - ***encode_convert***: bool, default False
   - If true, encode IDs are searched to be converted to GSM
-  
+
 Returns: 
-  - DataFrame or TextParser
+  - ***DataFrame*** or ***TextParser***
     - A comma-separated values (csv) file is returned as two-dimensional data structure with labeled axes
 
+Example:
+```python
+>> semantic_df = generate_semantic_df(sep="\t", encode_convert=True)
+```
+
 ### Data analysis
-```combsafe.plot_factor_freq(merged_df, n)```<br/>
+```combsafe.plot_factor_freq(dataframe, n)```<br/>
+Vertical barplot of the factor frequency in the input dataset<br/>
 
-![alt text](https://drive.google.com/uc?export=download&id=1WyFjK1eYM9nSbMKLht0dXp6ouscZ381P)
+Parameters: 
+- ***dataframe***: str, default '\t'
+  - Dataframe of semantic annotations
+- ***n***: int
+  - Number of Factor to diplay in the barplot
 
-```combsafe.generate_fixed_factor_pool(semantic_df, ["CTCF", "MYC"], 5)```
+Example:
+```python
+>> plot_factor_freq(semantic_df, 30)```
+```
+
+![alt text](https://drive.google.com/uc?export=download&id=1WyFjK1eYM9nSbMKLht0dXp6ouscZ381P) <br/>
+
+
+
+```combsafe.generate_fixed_factor_pool(dataframe, factor_list, number_of_semantic_annotation)``` <br/>
+Table containg lists of factors according to the selected parameters
+
+Parameters: 
+- ***dataframe***: dataframe
+  - Dataframe of semantic annotations
+- ***factor_list***: list
+  - List of factor to include in the analysis
+- ***number_of_semantic_annotation***: int
+  - Number of semantic annotations to include in the analysis
+
+Example:
+```python
+>> combsafe.generate_fixed_factor_pool(semantic_df, ["CTCF", "MYC"], 5)
+```
 
 ![alt text](https://drive.google.com/uc?export=download&id=1Qc4W9vm2ekev_P13-56akRNpK_oY92BQ)
 
