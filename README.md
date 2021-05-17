@@ -184,15 +184,59 @@ Example:
 
 ---
 
-### Genome-wide analysis
 
-```reducted_df = genome_reduction(full_df)```<br/>
-```data_driven_heatmap(reducted_df)```<br/>
+
+
+### Genome-wide analysis
+```combsafe.data_driven_heatmap(functional_states_dataframe)```<br/>
+Show a Genome-wide heatmap with the most significant clusters of genomic regions between their patterns of functional states <br/>
+Parameters: 
+- ***functional_state_dataframe***: dataframe
+  - dataframe of functional states
+
+Return: 
+- ***cluster_indices***: array
+  - cluster labels of integer for each data sample
+
+Example:
+```python
+>> genome_wide_heatmap = data_driven_heatmap(functional_states_df)
+```
 ![alt text](https://drive.google.com/uc?export=download&id=1jbyS_WY54SfJtCWQhw9tpiYW8vC2QJ_Q)
 
+---
 
-```gene_ontology_enrichment_analysis(clustered_heatmap, reducted_df, sig_cut_off= 0.05)```
+
+```combsafe.gene_ontology_enrichment_analysis(cluster_indices, functional_state_dataframe, significance_cut_off)```<br/>
+Show a Genome-wide heatmap with the most significant clusters of genomic regions between their patterns of functional states <br/>
+Parameters:
+- ***cluster_indices***: array
+  - dataframe of functional states
+- ***functional_state_dataframe***: dataframe
+  - dataframe of functional states
+- ***significance_cut_off***: int
+  - threshold for p-value enrichment analysis
+
+Example:
+```python
+>> gene_ontology_enrichment_analysis(genome_wide_heatmap, functional_states_df, 0.05)
+```
+---
 
 ### Single-gene analysis
 
-...
+```combsafe.single_gene_analysis(functional_state_dataframe, path_to_gene_list)```<br/>
+Given a list of genes in a textual file, the heatmap of the functional states of the related genomic regions are shown <br/>
+Parameters:
+- ***functional_state_dataframe***: dataframe
+  - dataframe of functional states
+- ***path_to_gene_list***: path
+  - path to the gene list 
+
+Example:
+```python
+>> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt")
+```
+![alt text](https://drive.google.com/uc?export=download&id=1zkj4DhgfR36UiIAM99ohF1byaXojKRNU)
+
+---
