@@ -123,7 +123,7 @@ Example:
 ### [Optional] Add custom tracks
 
 ```combsafe.download_file("custom_tracks_link")```<br/>
-Download custum tracks of static genomic genomic elements from URL (e.g. UCSC) in the ./input_files/ folder. <br/>
+Download custom tracks of static genomic elements from URL (e.g., UCSC) in the ./input_files/ folder. <br/>
 Parameters: 
 - ***custom_tracks_link***: url
   - url of custom track to be downloaded
@@ -136,14 +136,14 @@ Example:
 ---
 
 ```combsafe.add_custom_tracks(track_label_name, path_to_custom_tracks, index)```<br/>
-Add custum tracks of static genomic genomic elements to the analysis (e.g. CpG islands). <br/>
+Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
 Parameters: 
 - ***track_label_name***: string
   - name of custom tracks
 - ***path_to_custom_tracks***: path
   - UCSC path for downloading custom tracks
 - ***index***: int
-  - column to use as the row labels of the DataFrame
+  - column to use for row labels of the DataFrame
 
 Example:
 ```python
@@ -152,15 +152,15 @@ Example:
 
 ---
 
-### Identification of combinations of genomic functional element 
+### Identification of combinations of genomic functional elements 
 
 ```combsafe.identify_functional_states(number_of_states, n_core)```<br/>
-Add custum tracks of static genomic genomic elements to the analysis (e.g. CpG islands). <br/>
+Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
 Parameters: 
 - ***number_of_states***: int
   - number of combinations of genomic functional elements
 - ***n_core***: int
-  - number of core to use for the analysis
+  - number of cores to use for the analysis
 
 Example:
 ```python
@@ -170,10 +170,10 @@ Example:
 ---
 
 ```combsafe.show_emission_graph(custom_palette=colors)```<br/>
-Add custum tracks of static genomic genomic elements to the analysis (e.g. CpG islands). <br/>
+Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
 Parameters: 
-- ***custom_palette***: list of exadecimal
-  - optionally, add a list of customized colors in hexadecimal form to be assigned to the functional states;
+- ***custom_palette***: list of exadecimals
+  - optionally, add a list of customized colors in hexadecimal form to be assigned to the functional states
 
 Example:
 ```python
