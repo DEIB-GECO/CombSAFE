@@ -189,14 +189,14 @@ Example:
 
 ### Genome-wide analysis
 ```combsafe.data_driven_heatmap(functional_states_dataframe)```<br/>
-Show a Genome-wide heatmap with the most significant clusters of genomic regions between their patterns of functional states <br/>
+Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 Parameters: 
-- ***functional_state_dataframe***: dataframe
+- ***functional_states_dataframe***: dataframe
   - dataframe of functional states
 
 Return: 
 - ***cluster_indices***: array
-  - cluster labels of integer for each data sample
+  - cluster integer labels for each data sample
 
 Example:
 ```python
@@ -208,7 +208,7 @@ Example:
 
 
 ```combsafe.gene_ontology_enrichment_analysis(cluster_indices, functional_state_dataframe, significance_cut_off)```<br/>
-Show a Genome-wide heatmap with the most significant clusters of genomic regions between their patterns of functional states <br/>
+Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 Parameters:
 - ***cluster_indices***: array
   - dataframe of functional states
@@ -226,7 +226,7 @@ Example:
 ### Single-gene analysis
 
 ```combsafe.single_gene_analysis(functional_state_dataframe, path_to_gene_list)```<br/>
-Given a list of genes in a textual file, the heatmap of the functional states of the related genomic regions are shown <br/>
+Given a list of genes in a textual file, the heatmap of the functional states of the related genomic regions are shown. <br/>
 Parameters:
 - ***functional_state_dataframe***: dataframe
   - dataframe of functional states
