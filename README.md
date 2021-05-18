@@ -89,7 +89,7 @@ Example:
 ---
 
 ```combsafe.get_semantic_annotation_list(dataframe, factor_list)``` <br/>
-list of semantic annotations according to the selected factors.<br/>
+List of semantic annotations according to the selected factors.<br/>
 
 Parameters: 
 - ***dataframe***: dataframe
@@ -124,6 +124,7 @@ Example:
 
 ```combsafe.download_file("custom_tracks_link")```<br/>
 Download custom tracks of static genomic elements from URL (e.g., UCSC) in the ./input_files/ folder. <br/>
+
 Parameters: 
 - ***custom_tracks_link***: url
   - url of custom track to be downloaded
@@ -137,6 +138,7 @@ Example:
 
 ```combsafe.add_custom_tracks(track_label_name, path_to_custom_tracks, index)```<br/>
 Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
+
 Parameters: 
 - ***track_label_name***: string
   - name of custom tracks
@@ -156,6 +158,7 @@ Example:
 
 ```combsafe.identify_functional_states(number_of_states, n_core)```<br/>
 Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
+
 Parameters: 
 - ***number_of_states***: int
   - number of combinations of genomic functional elements
@@ -171,6 +174,7 @@ Example:
 
 ```combsafe.show_emission_graph(custom_palette=colors)```<br/>
 Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
+
 Parameters: 
 - ***custom_palette***: list of exadecimals
   - optionally, add a list of customized colors in hexadecimal form to be assigned to the functional states
@@ -190,6 +194,7 @@ Example:
 ### Genome-wide analysis
 ```combsafe.data_driven_heatmap(functional_states_dataframe)```<br/>
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
+
 Parameters: 
 - ***functional_states_dataframe***: dataframe
   - dataframe of functional states
@@ -209,6 +214,7 @@ Example:
 
 ```combsafe.gene_ontology_enrichment_analysis(cluster_indices, functional_state_dataframe, significance_cut_off)```<br/>
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
+
 Parameters:
 - ***cluster_indices***: array
   - cluster integer labels for each data sample
@@ -227,6 +233,7 @@ Example:
 
 ```combsafe.single_gene_analysis(functional_state_dataframe, path_to_gene_list)```<br/>
 Given a list of gene symbols in a textual file, the heatmap of the functional states of the related genomic regions is shown. <br/>
+
 Parameters:
 - ***functional_state_dataframe***: dataframe
   - dataframe of functional states
