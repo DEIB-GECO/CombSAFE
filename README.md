@@ -211,7 +211,7 @@ Example:
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 Parameters:
 - ***cluster_indices***: array
-  - dataframe of functional states
+  - cluster integer labels for each data sample
 - ***functional_state_dataframe***: dataframe
   - dataframe of functional states
 - ***significance_cut_off***: int
@@ -226,7 +226,7 @@ Example:
 ### Single-gene analysis
 
 ```combsafe.single_gene_analysis(functional_state_dataframe, path_to_gene_list)```<br/>
-Given a list of genes in a textual file, the heatmap of the functional states of the related genomic regions are shown. <br/>
+Given a list of gene symbols in a textual file, the heatmap of the functional states of the related genomic regions is shown. <br/>
 Parameters:
 - ***functional_state_dataframe***: dataframe
   - dataframe of functional states
