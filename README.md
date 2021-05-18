@@ -40,7 +40,7 @@ Parameters:
 
 Returns: 
   - ***DataFrame*** or ***TextParser***
-    - A comma-separated values (csv) file is returned as two-dimensional data structure with labeled axes.
+    - A comma-separated values (csv) file is returned as a two-dimensional data structure with labeled axes.
 
 Example:
 ```python
