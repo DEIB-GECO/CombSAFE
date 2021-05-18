@@ -108,7 +108,7 @@ Example:
 
 ### Data extraction and replica combination
 ```combsafe.run_gmql(factor_list)```<br/>
-list of semantic annotations according to the selected factors.<br/>
+Combine sample replicas of the listed factors and extract their semantic annotations regarding the conditions in which they were mapped.<br/>
 
 Parameters: 
 - ***factor_list***: list
