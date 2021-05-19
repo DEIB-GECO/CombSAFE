@@ -6,9 +6,9 @@
 file_path = "./"
 bed_folder_path = "./"
 
-custom = True
-GMQL_output_dir = "./cost_of_fuel_output/POLR2A_CTCF_MYC_H3K4me3_H3K27me3_pipeline/"
-n_states = 15
+custom = False
+GMQL_output_dir = ""
+n_states = 0
 n_states_model = GMQL_output_dir + str(n_states) + "_state_model/"
 custom_name = ""
 custom_path = ""
@@ -32,7 +32,7 @@ import hdbscan
 import requests
 import itertools
 import subprocess
-#import gmql as gl
+import gmql as gl
 import numpy as np
 import pandas as pd
 import urllib.request
