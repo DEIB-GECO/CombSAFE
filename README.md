@@ -11,11 +11,39 @@ Given as input a set of ChIP-seq dataset samples and the list of functional elem
 - focusing on specific genomic regions, applying clustering to explore how significant combinations of the functional elements compare among semantically annoted cell types and desease/healthy conditions 
 - performing functional enrichment analyses based on the genes found in genomic regions with similar combinations of functional elements.
 
+## Structure
+```
+CombSAFE/
+|-- README.md
+|-- LICENSE
+|-- .gitignore
+|-- notebook/
+|   |-- Functional_states_analysis.ipynb
+|-- gene_list/
+|   |-- MYC_associated.txt
+|   |-- test_list.txt
+|   |-- tumor_suppressor.txt
+|-- CombSAFE/
+|   |-- CombSAFE.py
+|-- CombSAFE.yml
+```
+
+- `README.md` this file
+- `LICENSE` MIT license file
+- `.gitignore` standard .gitignore file for Python projects
+- `notebook/Functional_states_analysis.ipynb` python notebook to run a functional state analysis
+- `gene_list/` folder where gene name list are stored for the CombSAFE single gene analysis
+- `gene_list/test_list.txt` list of random genes
+- `gene_list/tumor_suppressor.txt` list of tumor suppressor genes
+- `gene_list/MYC_associated.txt` list of MYC interacting genes
+- `CombSAFE/CombSAFE.py` core Python routines called from within the notebook to perform the functional state analysis
+- `CombSAFE.yml` dependency yaml file to load in order to perform the CombSAFE analysis
+
+
 ## How to install
 In order to run the CombSAFE pipeline, please load the conda environment with the command: ```conda env create -f CombSAFE.yml``` <br/>
-NB: the `gmql` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html).
-
-
+NB: the `gmql` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
+NB2: before using `PyEnsembl`, please download and install Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/).
 
 ## Cookbook
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
