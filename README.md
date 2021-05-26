@@ -43,7 +43,7 @@ CombSAFE/
 ## How to install
 In order to run the CombSAFE pipeline, please load the conda environment with the command: ```conda env create -f CombSAFE.yml``` <br/>
 NB: the `gmql` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
-NB2: before using `PyEnsembl`, please download and install Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/).
+NB2: before using `PyEnsembl`, download and install Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/).
 
 ## Cookbook
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
