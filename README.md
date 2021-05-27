@@ -41,7 +41,7 @@ CombSAFE/
 
 
 ## How to install
-In order to run the CombSAFE pipeline, please load the Conda environment with the command: ```conda env create -f CombSAFE.yml``` <br/>
+In order to run the ```CombSAFE``` pipeline, please load the Conda environment with the command: ```conda env create -f CombSAFE.yml``` <br/>
 
 NB: The `pyGMQL` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
 
