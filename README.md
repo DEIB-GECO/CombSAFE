@@ -51,49 +51,51 @@ NB2: Before using `PyEnsembl`, download and install Ensembl data. Please follow 
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
 
 ### Load input files
-```combsafe.import_path(filepath)```<br/>
+```combsafe.import_path(path)```<br/>
 Load the input path for the analysis.<br/>
 
 Parameters: 
-- ***filepath***: path object or file-like object 
+- ***path***: path object or file-like object   
 
 Example:
 ```python
->> import_path("./path_to_files/")
+>> input_path = import_path("./path_to_files/")
 ```
 
 ---
 
 ### Generate semantic annotations
-```combsafe.generate_semantic_df(separator, encode_convert)```<br/>
+```combsafe.generate_semantic_annotations(input_path, sep, encode_convert)```<br/>
 Generate semantic annotations about tissue and disease types from the input dataset.<br/>
 
-Parameters: 
-- ***separator***: str, default '\t'
-  - Delimiter to use for the input .txt file
+Parameters:
+- ***input_path*** str
+  - path of the input dataset folder
+- ***sep***: str, default '\t'
+  - delimiter to use for the input .txt file
 - ***encode_convert***: bool, default False
-  - If true, encode IDs are searched to be converted to GSM
+  - if true, encode IDs are searched to be converted to GSM
 
 Returns: 
-  - ***DataFrame*** or ***TextParser***
-    - A comma-separated values (csv) file is returned as a two-dimensional data structure with labeled axes.
+  - ***semantic_dataframe***
+    - dataset of biological conditions from the input metadata
 
 Example:
 ```python
->> semantic_df = generate_semantic_df(sep="\t", encode_convert=True)
+>> semantic_df = generate_semantic_annotations(input_path, sep="\t", encode_convert=True)
 ```
 
 ---
 
 ### Data analysis
-```combsafe.plot_factor_freq(dataframe, n)```<br/>
+```combsafe.plot_factor_freq(semantic_dataframe, n)```<br/>
 Vertical barplot of the factor frequency in the input dataset.<br/>
 
 Parameters: 
-- ***dataframe***: str, default '\t'
-  - Dataframe of semantic annotations
+- ***semantic_dataframe***: str, default '\t'
+  - dataset of biological conditions from the input metadata
 - ***n***: int
-  - Number of factors to diplay in the barplot
+  - number of factors to display in the barplot
 
 Example:
 ```python
@@ -104,16 +106,16 @@ Example:
 
 ---
 
-```combsafe.generate_fixed_factor_pool(dataframe, factor_list, number_of_semantic_annotation)``` <br/>
+```combsafe.generate_fixed_factor_pool(semantic_dataframe, factor_list, number_of_semantic_annotations)``` <br/>
 Table containg lists of factors according to the selected parameters.<br/>
 
 Parameters: 
-- ***dataframe***: dataframe
-  - Dataframe of semantic annotations
+- ***semantic_dataframe***: dataframe
+  - dataset of biological conditions from the input metadata
 - ***factor_list***: list
-  - List of factors to include in the analysis
-- ***number_of_semantic_annotation***: int
-  - Number of semantic annotations to include in the analysis
+  - list of factors to include in the analysis
+- ***number_of_semantic_annotations***: int
+  - number of semantic annotations to include in the analysis
 
 Example:
 ```python
@@ -124,18 +126,18 @@ Example:
 
 ---
 
-```combsafe.get_semantic_annotation_list(dataframe, factor_list)``` <br/>
+```combsafe.get_semantic_annotation_list(semantic_dataframe, factor_list)``` <br/>
 List of semantic annotations according to the selected factors.<br/>
 
 Parameters: 
-- ***dataframe***: dataframe
-  - Dataframe of semantic annotations
+- ***semantic_dataframe***: dataframe
+  - dataset of biological conditions from the input metadata
 - ***factor_list***: list
-  - List of factors to include in the analysis
+  - list of factors to include in the analysis
 
 Example:
 ```python
->> get_semantic_annotation_list(semantic_df, ["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])  <br/>
+>> get_semantic_annotation_list(semantic_df, ["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])
 ```
 
 ![alt text](https://drive.google.com/uc?export=download&id=1llQnJyeJku6evCgDaOymWuiIgCE5dYXO)
@@ -143,22 +145,22 @@ Example:
 ---
 
 ### Data extraction and replica combination
-```combsafe.run_gmql(factor_list)```<br/>
+```combsafe.extract_data(factor_list)```<br/>
 Combine sample replicas of the listed factors and extract their semantic annotations regarding the conditions in which they were mapped.<br/>
 
 Parameters: 
 - ***factor_list***: list
-  - List of factors to include in the analysis
+  - list of factors to include in the analysis
 
 Example:
 ```python
->> run_gmql(["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])
+>> extract_data(["CTCF", "MYC", "POLR2A", "H3K4me3", "H3K27me3"])
 ```
 ---
 
 ### [Optional] Add custom tracks
 
-```combsafe.download_file("custom_tracks_link")```<br/>
+```combsafe.download_custom_tracks(custom_tracks_link)```<br/>
 Download custom tracks of static genomic elements from URL (e.g., UCSC) in the ./input_files/ folder. <br/>
 
 Parameters: 
@@ -167,20 +169,20 @@ Parameters:
 
 Example:
 ```python
->> download_file("http://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/cpgIslandExt.txt.gz")
+>> download_custom_tracks("http://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/cpgIslandExt.txt.gz")
 ```
 
 ---
 
-```combsafe.add_custom_tracks(track_label_name, path_to_custom_tracks, index)```<br/>
+```combsafe.add_custom_tracks(tracks_label, path_to_custom_tracks, index)```<br/>
 Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
 
 Parameters: 
-- ***track_label_name***: string
-  - name of custom tracks
+- ***tracks_label***: string
+  - name of the custom tracks to add for the analysis
 - ***path_to_custom_tracks***: path
   - UCSC path for downloading custom tracks
-- ***index***: int
+- ***index***: int, default=0
   - column to use for row labels of the DataFrame
 
 Example:
@@ -192,10 +194,12 @@ Example:
 
 ### Identification of combinations of genomic functional elements 
 
-```combsafe.identify_functional_states(number_of_states, n_core)```<br/>
-Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
+```combsafe.identify_functional_states(ChromHMM_path, number_of_states, n_core)```<br/>
+identification of combinations of static and dynamic functional elements throughout the genome. <br/>
 
-Parameters: 
+Parameters:
+- ***ChromHMM_path***: path
+  - path to the chromHMM software folder. It can be downloaded [here](http://compbio.mit.edu/ChromHMM/).
 - ***number_of_states***: int
   - number of combinations of genomic functional elements
 - ***n_core***: int
@@ -203,17 +207,17 @@ Parameters:
 
 Example:
 ```python
->> identify_functional_states(track_lable_n, path_to_custom_track, index)
+>> identify_functional_states(chromhmm_path ="./ChromHMM/", number_of_states = 15, n_core = 20)
 ```
 
 ---
 
 ```combsafe.show_emission_graph(custom_palette=colors)```<br/>
-Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
+Show emission parameters heatmap of genome functional states combination. <br/>
 
 Parameters: 
-- ***custom_palette***: list of exadecimals
-  - optionally, add a list of customized colors in hexadecimal form to be assigned to the functional states
+- ***custom_palette***: list of exadecimals, default=None
+  - add a list of customized colors in hexadecimal form to be assigned to the functional states. 
 
 Example:
 ```python
@@ -224,10 +228,44 @@ Example:
 
 ---
 
+### Load dataframe of functional states
+```combsafe.load_states_dataframe()```<br/>
 
+Return:
+- ***functional_states_dataframe***: dataframe
+  - dataframe of functional states
+
+Example:
+```python
+>> functional_states_df = load_functional_states_dataframe()
+```
+
+---
+
+### Single-gene analysis
+
+```combsafe.single_gene_analysis(functional_states_dataframe, path_to_gene_list_file)```<br/>
+Given a list of gene symbols in a textual file, the heatmap of the functional states of the related genomic regions is shown. <br/>
+
+Parameters:
+- ***functional_states_dataframe***: dataframe
+  - dataframe of functional states
+- ***path_to_gene_list_file***: path
+  - path to the gene list file
+
+Example:
+```python
+>> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt")
+```
+![alt text](https://drive.google.com/uc?export=download&id=1zkj4DhgfR36UiIAM99ohF1byaXojKRNU)
+
+---
 
 
 ### Genome-wide analysis
+
+
+
 ```combsafe.data_driven_heatmap(functional_states_dataframe)```<br/>
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 
@@ -253,7 +291,7 @@ Show a genome-wide heatmap with the most significant clusters of genomic regions
 
 Parameters:
 - ***cluster_indices***: array
-  - cluster integer labels for each data sample
+  - array of cluster integer labels for each data sample
 - ***functional_state_dataframe***: dataframe
   - dataframe of functional states
 - ***significance_cut_off***: int
@@ -265,21 +303,3 @@ Example:
 ```
 ---
 
-### Single-gene analysis
-
-```combsafe.single_gene_analysis(functional_state_dataframe, path_to_gene_list)```<br/>
-Given a list of gene symbols in a textual file, the heatmap of the functional states of the related genomic regions is shown. <br/>
-
-Parameters:
-- ***functional_state_dataframe***: dataframe
-  - dataframe of functional states
-- ***path_to_gene_list***: path
-  - path to the gene list 
-
-Example:
-```python
->> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt")
-```
-![alt text](https://drive.google.com/uc?export=download&id=1zkj4DhgfR36UiIAM99ohF1byaXojKRNU)
-
----
