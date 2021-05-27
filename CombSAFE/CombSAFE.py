@@ -630,7 +630,7 @@ def show_emission_graph(custom_palette = False):
     em = em.resize((200, 350), Image.ANTIALIAS)
 
     
-def load_funtional_states_dataframe():
+def load_functional_states_dataframe():
     segment_files()
     #create dataframe with segmentated files
     labels = []
