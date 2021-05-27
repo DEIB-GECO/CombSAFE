@@ -310,7 +310,7 @@ Parameters:
 - ***reducted_dataframe***: dataframe
   - reducted dataframe of functional states
 - ***significance_cut_off***: int
-  - threshold for p-value enrichment analysis
+  - threshold for p-value enrichment analysis, default = 0.05
 
 Example:
 ```python
