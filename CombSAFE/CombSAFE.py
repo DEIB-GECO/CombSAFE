@@ -135,7 +135,7 @@ def load_semantic_dataframe(dataset, sep):
 
 
 
-def generate_semantic_annotations(dataset, sep, encode_convert=False):
+def generate_semantic_annotations(input_path, sep, encode_convert=False):
     get_geoids_list(sep, encode_convert)
     if not os.path.exists(combsafe_output + 'annotations/ontologies'):
         os.makedirs(combsafe_output + 'annotations/ontologies')
@@ -213,12 +213,12 @@ def generate_semantic_annotations(dataset, sep, encode_convert=False):
 
     
     os.remove("./geo_ids_list.txt")
-    load_semantic_dataframe(dataset, sep)  
+    load_semantic_dataframe(input_path, sep)  
 
     
     
-def plot_factor_freq(merged_df, n):
-    factor_frequency = merged_df['Factor'].value_counts().rename_axis('Factors').reset_index(name='Frequency')
+def plot_factor_freq(semantic_dataframe, n):
+    factor_frequency = semantic_dataframe['Factor'].value_counts().rename_axis('Factors').reset_index(name='Frequency')
     top_factors = factor_frequency.head(n)
     new = [tuple(r) for r in top_factors[['Factors', 'Frequency']].values]
 
@@ -264,15 +264,15 @@ def generate_factor_pool(merged_df, n, onlyfactors=False, onlymarks=False):
 
 
 
-def generate_fixed_factor_pool(merged_df, fx_list, n):
-    factor_frequency = merged_df['Factor'].value_counts().rename_axis('Factors').reset_index(name='Frequency')
+def generate_fixed_factor_pool(semantic_dataframe, factor_list, n):
+    factor_frequency = semantic_dataframe['Factor'].value_counts().rename_axis('Factors').reset_index(name='Frequency')
     f_list = factor_frequency.head(20)['Factors']
-    clean_set = pd.Series(list((set(f_list) - set(fx_list))))
+    clean_set = pd.Series(list((set(f_list) - set(factor_list))))
     cols = ['factor_list', 'n_semantic_annotations']
     lst = []
-    for n, comb in enumerate(itertools.combinations(clean_set, n - len(fx_list))):
-        new = fx_list + list(comb)
-        selection_test = merged_df[merged_df["Factor"].isin(new)]
+    for n, comb in enumerate(itertools.combinations(clean_set, n - len(factor_list))):
+        new = factor_list + list(comb)
+        selection_test = semantic_dataframe[semantic_dataframe["Factor"].isin(new)]
         f_count_test = selection_test.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
         n_samples_test = f_count_test[f_count_test["Factor"] == len(new)].shape[0]
         lst.append([", ".join(new), n_samples_test])
@@ -283,11 +283,11 @@ def generate_fixed_factor_pool(merged_df, fx_list, n):
     print(tabulate(final_df, headers='keys', tablefmt='psql'))
     
 
-def get_semantic_annotation_list(merged_df, pool):
+def get_semantic_annotation_list(semantic_dataframe, factor_list):
     v=[]
-    selection = merged_df[merged_df["Factor"].isin(pool)]
+    selection = semantic_dataframe[semantic_dataframe["Factor"].isin(factor_list)]
     f_count = selection.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
-    n_samples = f_count[f_count["Factor"] == len(pool)]
+    n_samples = f_count[f_count["Factor"] == len(factor_list)]
     n_samples_list = list(n_samples.index)
     for i in range(len(n_samples_list)):
         v.append((str(i+1) + " - " + n_samples_list[i]))
@@ -405,28 +405,28 @@ def generate_gdm_format(bed_folder_path):
     generate_schema(narrow=True)
 
 
-def extract_data(dataset, pool):
+def extract_data(dataset, factor_list):
     generate_gdm_format(dataset)
     global GMQL_output_dir
-    GMQL_output_dir = "./CombSAFE_output/"+ "_".join(pool) + "_pipeline/"
+    GMQL_output_dir = "./CombSAFE_output/"+ "_".join(factor_list) + "_pipeline/"
     broad = gl.load_from_path(local_path= combsafe_output + "gdm_metadata/broad/", parser = gl.parsers.BroadPeakParser())
     narrow = gl.load_from_path(local_path= combsafe_output + "gdm_metadata/narrow/", parser = gl.parsers.NarrowPeakParser())
-    f_broad = broad[broad['Factor'].isin(pool)]
-    f_narrow = narrow[narrow['Factor'].isin(pool)]
+    f_broad = broad[broad['Factor'].isin(factor_list)]
+    f_narrow = narrow[narrow['Factor'].isin(factor_list)]
     full_dataset = f_broad.union(f_narrow, left_name="broad", right_name="narrow")
     sem_ann = full_dataset.cover(minAcc=1, maxAcc="Any", groupBy=['Semantic_Annotation', 'Factor'])
     groups_c = sem_ann.group(meta=['Semantic_Annotation'], meta_aggregates = {'n_samp' : gl.COUNTSAMP()})
-    final = groups_c[(groups_c['n_samp'] == len(pool))]
+    final = groups_c[(groups_c['n_samp'] == len(factor_list))]
     results = final.materialize(GMQL_output_dir)
             
     
-def add_custom_tracks(custom_file_path, index = 0):
+def add_custom_tracks(tracks_label, path_to_custom_tracks, index = 0):
     
     global custom_path
-    custom_path = custom_file_path
+    custom_path = path_to_custom_tracks
     
     global custom_name
-    custom_name = custom_path.split("/")[-1].split(".")[0]
+    custom_name = tracks_label
     
     global custom
     custom = True
@@ -435,27 +435,27 @@ def add_custom_tracks(custom_file_path, index = 0):
     if not os.path.exists(destination_path):
         os.makedirs(destination_path)
     
-    custom_file = pd.read_csv(custom_file_path, sep="\t", index_col=index, header=None).iloc[:,1:3].reset_index()
+    custom_file = pd.read_csv(path_to_custom_tracks, sep="\t", index_col=index, header=None).iloc[:,1:3].reset_index()
     custom_file.columns = ["chr", "start", "stop"]
     custom_file = custom_file[custom_file['chr'].str.len() < 6]
     custom_file["strand"] = "+"
 
-    custom_file.to_csv(os.path.join(destination_path, custom_path.split("/")[-1].split(".")[0] + ".bed"), sep="\t", index=False, header=False)  
+    custom_file.to_csv(os.path.join(destination_path, tracks_label + ".bed"), sep="\t", index=False, header=False)  
     
 
 
-def download_custom_tracks(url):
+def download_custom_tracks(custom_tracks_url):
     
     if not os.path.exists(combsafe_output + "downloaded_files/"):
         os.makedirs(combsafe_output + "downloaded_files/")
 
     # Download archive
 
-    name = url.split("/")[-1].split(".")[0]
-    custom_file_path = combsafe_output + "downloaded_files/" + url.split("/")[-1].split(".gz")[0]
+    name = custom_tracks_link.split("/")[-1].split(".")[0]
+    custom_file_path = combsafe_output + "downloaded_files/" + custom_tracks_link.split("/")[-1].split(".gz")[0]
     try:
       # Read the file inside the .gz archive located at url
-      with urllib.request.urlopen(url) as response:
+      with urllib.request.urlopen(custom_tracks_link) as response:
             with gzip.GzipFile(fileobj=response) as uncompressed:
                 file_content = uncompressed.read()
 
@@ -524,7 +524,7 @@ def segment_files():
     
     
     
-def identify_functional_states(chromhmm_path, number_of_states, n_core):
+def identify_functional_states(ChromHMM_path, number_of_states, n_core):
     
     global n_states_model
     n_states_model = GMQL_output_dir + str(number_of_states) + "_state_model/"
@@ -536,7 +536,7 @@ def identify_functional_states(chromhmm_path, number_of_states, n_core):
     destination_path = GMQL_output_dir + "bed_directory/"
     txt_file = GMQL_output_dir + "./cellmarkfiletable.txt"
     gmql_output = GMQL_output_dir + "files/"
-    chromHMM_path = chromhmm_path
+
 
     if not os.path.exists(destination_path):
         os.makedirs(destination_path)
@@ -568,10 +568,10 @@ def identify_functional_states(chromhmm_path, number_of_states, n_core):
             cellmarkfiletable.write(sem_ann + "\t" + custom_name + "\t" +  custom_path.split("/")[-1].split(".")[0] + ".bed" + "\n")        
     cellmarkfiletable.close()
     
-    binarizing = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'BinarizeBed','-peaks', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
+    binarizing = " ".join(['java', '-mx32600M', '-jar', ChromHMM_path + 'ChromHMM.jar', 'BinarizeBed','-peaks', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
     subprocess.call(binarizing, shell=True)
     
-    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  binarized_files, n_states_model, str(number_of_states), 'hg38'])
+    learning = " ".join(['java', '-mx32600M', '-jar', ChromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  binarized_files, n_states_model, str(number_of_states), 'hg38'])
     subprocess.call(learning, shell=True)
     
     global chromHMM_output
@@ -630,7 +630,7 @@ def show_emission_graph(custom_palette = False):
     em = em.resize((200, 350), Image.ANTIALIAS)
 
     
-def load_states_dataframe():
+def load_funtional_states_dataframe():
     segment_files()
     #create dataframe with segmentated files
     labels = []
@@ -641,15 +641,14 @@ def load_states_dataframe():
             n_states = n_states_model.split("/")[3].split("_")[0]
             labels.append(file.split("_" + str(n_states) + "_")[0])
 
-    main_df = pd.read_csv(n_states_model + 'segmentated_files/' + files[0], sep="\t", header=None)
+    functional_states_dataframe = pd.read_csv(n_states_model + 'segmentated_files/' + files[0], sep="\t", header=None)
     for i in range(1,len(files)): 
         states = pd.read_csv(n_states_model + 'segmentated_files/' + files[i], sep="\t",  usecols=[3], header=None)
-        main_df[str(i+3)] = states
+        functional_states_dataframe[str(i+3)] = states
 
-    main_df.columns = ('chr start stop'.split(" ") + labels)
-    main_df = main_df.set_index(["chr", "start", "stop"]).applymap(lambda x: int(x[1:]))
-    #main_df.to_csv(graphs_path + "main_df.txt", sep="\t", index=False)
-    return(main_df)
+    functional_states_dataframe.columns = ('chr start stop'.split(" ") + labels)
+    functional_states_dataframe = functional_states_dataframe.set_index(["chr", "start", "stop"]).applymap(lambda x: int(x[1:]))
+    return(functional_states_dataframe)
   
     
     
@@ -661,13 +660,13 @@ def get_concat_h(im1, im2):
 
 
 
-def single_gene_analysis(main_df, file_path):
+def single_gene_analysis(functional_states_dataframe, path_to_gene_list_file):
    
-    gene_list = open(file_path, "r").readlines()
+    gene_list = open(path_to_gene_list_file, "r").readlines()
 
     plt.rcParams.update({'figure.max_open_warning': 0})
 
-    list_name = file_path.split("/")[-1].split(".")[0]
+    list_name = path_to_gene_list_file.split("/")[-1].split(".")[0]
     single_gene_path = graphs_path + "single_gene_analysis/" + list_name + "/"
 
     if not os.path.exists(single_gene_path):
@@ -681,7 +680,7 @@ def single_gene_analysis(main_df, file_path):
         except:
             pass
 
-        region = main_df.loc[["chr" + str(gene_data.contig)]].query(f'start >= {str(gene_data.start)} & stop <= {str(gene_data.end)}')
+        region = functional_states_dataframe.loc[["chr" + str(gene_data.contig)]].query(f'start >= {str(gene_data.start)} & stop <= {str(gene_data.end)}')
         number_of_states = int(n_states_model.split("/")[3].split("_")[0])    
         gene_coordinates = "chr" + str(gene_data.contig) + ":" + str(f"{gene_data.start:,}") + "-" +  str(f"{gene_data.end:,}")
         gene_heatmap = sns.clustermap(region, col_cluster='hamming', row_cluster=False, cmap=color_list[0:(number_of_states)], vmin=1, vmax=n_states, xticklabels=True, yticklabels=3, figsize=(10, 25), linewidths=.1)
@@ -703,14 +702,14 @@ def single_gene_analysis(main_df, file_path):
         os.remove(single_gene_path + gene_name + "_data_driven_heatmap_temp.jpeg")
         plt.cla()    
 
-def genome_reduction(main_df):
+def genome_reduction(functional_states_dataframe):
 
     list_of_dataframe=[]
     intra_chrom_dict = {}
     chrs = ['chr'+ str(x) for x in list(range(1,23))+['X', 'Y']]
-    inactive_chromatin = np.argmax(np.bincount(main_df.values.flat))
+    inactive_chromatin = np.argmax(np.bincount(functional_states_dataframe.values.flat))
     for chrom in chrs:
-        temp_df = main_df.loc[chrom].drop_duplicates()
+        temp_df = functional_states_dataframe.loc[chrom].drop_duplicates()
         print("\r", chrom, end=" ")
         temp_df2 = temp_df[(temp_df==inactive_chromatin).sum(axis=1)/len(temp_df.columns) <= 0.90]
         clusterer = hdbscan.HDBSCAN(metric='hamming', min_cluster_size=5, min_samples=2)
@@ -752,7 +751,7 @@ def genome_reduction(main_df):
     return(new_df)
 
 
-def load_reducted_df():
+def load_reducted_dataframe():
     test_df = pd.read_csv(n_states_model + "segmentated_files/" + "reducted_genome.txt", sep="\t")
     test_df.columns = ["chr", "start", "stop"] + list(test_df.columns[3:])
     test_df = test_df.set_index(["chr", "start", "stop"])
@@ -806,8 +805,8 @@ def show_emission_graph_with_coverage(new_df, custom_palette = False):
     plt.savefig(graphs_path + 'chromatin_states_emissions_coverage_' + str(n_states) + '.svg', bbox_inches='tight', format="svg" , dpi=100)
     plt.show()
     
-def data_driven_heatmap(reducted_df):
-    copy_df = reducted_df.copy()
+def data_driven_heatmap(reducted_dataframe):
+    copy_df = reducted_dataframe.copy()
 
     distance_matrix_cols = pairwise_distances(copy_df.T, metric='hamming')
     distance_matrix_rows = pairwise_distances(copy_df, metric='hamming')
@@ -873,9 +872,9 @@ def data_driven_heatmap(reducted_df):
 
     return(indices_f)
             
-def semantic_driven_heatmap(reducted_df):
+def semantic_driven_heatmap(reducted_dataframe):
     
-    copy_df = reducted_df.copy()
+    copy_df = reducted_dataframe.copy()
     distance_matrix_cols = pairwise_distances(copy_df.T, metric='hamming')
     distance_matrix_rows = pairwise_distances(copy_df, metric='hamming')
     link = linkage(ssd.squareform(distance_matrix_cols), method="ward")
@@ -941,7 +940,7 @@ def semantic_driven_heatmap(reducted_df):
     get_concat_h(em, hit).save(graphs_path + "semantic_driven_heatmap.jpeg")
     os.remove(graphs_path + "semantic_driven_heatmap_temp.jpeg") 
     
-def gene_ontology_enrichment_analysis(clustered_heatmap, reducted_df, sig_cut_off=0.05):
+def gene_ontology_enrichment_analysis(clustered_heatmap, reducted_dataframe, sig_cut_off=0.05):
 
     obo_fname = download_go_basic_obo()
     fin_gene2go = download_ncbi_associations()
@@ -985,7 +984,7 @@ def gene_ontology_enrichment_analysis(clustered_heatmap, reducted_df, sig_cut_of
         os.makedirs(clusters_path)
 
     ens_list = [] 
-    copy_df2 = reducted_df.copy()
+    copy_df2 = reducted_dataframe.copy()
     copy_df2['cluster'] = indices
     copy_df2.drop(copy_df2[copy_df2.cluster < 0].index, inplace=True)
     copy_df2 = copy_df2.sort_values('cluster')
