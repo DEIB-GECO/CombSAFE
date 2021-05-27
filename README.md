@@ -31,8 +31,8 @@ CombSAFE/
 - `README.md` this file
 - `LICENSE` MIT license file
 - `.gitignore` standard .gitignore file for Python projects
-- `notebook/Functional_states_analysis.ipynb` python notebook to run a functional state analysis
-- `gene_list/` folder where gene name list are stored for the CombSAFE single gene analysis
+- `notebook/Functional_states_analysis.ipynb` Python notebook to run a functional state analysis
+- `gene_list/` folder where gene name lists are stored for the CombSAFE single gene analysis
 - `gene_list/test_list.txt` list of random genes
 - `gene_list/tumor_suppressor.txt` list of tumor suppressor genes
 - `gene_list/MYC_associated.txt` list of MYC interacting genes
