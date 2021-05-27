@@ -263,43 +263,58 @@ Example:
 
 
 ### Genome-wide analysis
+```combsafe.genome_reduction(functional_states_dataframe)```<br/>
+Reduce the initial functional state dataframe to visualize the functional states of the various semantic annotations in the form of a heatmap. <br/>
+NB:  the proportions among the functional states are maintained as in the previous dataframe of functional states. <br/>
 
-
-
-```combsafe.data_driven_heatmap(functional_states_dataframe)```<br/>
-Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
-
-Parameters: 
+Parameters:
 - ***functional_states_dataframe***: dataframe
   - dataframe of functional states
 
+Return:
+- ***reducted_dataframe***: dataframe
+  - reducted dataframe of functional states
+ 
+Example:
+```python
+>> reducted_df = genome_reduction(functional_states_df)
+```
+
+
+```combsafe.data_driven_heatmap(reducted_dataframe)```<br/>
+Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
+
+Parameters: 
+- ***reducted_dataframe***: dataframe
+  - reducted dataframe of functional states
+
 Return: 
 - ***cluster_indices***: array
-  - cluster integer labels for each data sample
+  - array of cluster integer labels for each data sample
 
 Example:
 ```python
->> genome_wide_heatmap = data_driven_heatmap(functional_states_df)
+>> genome_wide_heatmap = data_driven_heatmap(reducted_df)
 ```
 ![alt text](https://drive.google.com/uc?export=download&id=1jbyS_WY54SfJtCWQhw9tpiYW8vC2QJ_Q)
 
 ---
 
 
-```combsafe.gene_ontology_enrichment_analysis(cluster_indices, functional_state_dataframe, significance_cut_off)```<br/>
+```combsafe.gene_ontology_enrichment_analysis(cluster_indices, reducted_dataframe, significance_cut_off)```<br/>
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 
 Parameters:
 - ***cluster_indices***: array
   - array of cluster integer labels for each data sample
-- ***functional_state_dataframe***: dataframe
-  - dataframe of functional states
+- ***reducted_dataframe***: dataframe
+  - reducted dataframe of functional states
 - ***significance_cut_off***: int
   - threshold for p-value enrichment analysis
 
 Example:
 ```python
->> gene_ontology_enrichment_analysis(genome_wide_heatmap, functional_states_df, 0.05)
+>> gene_ontology_enrichment_analysis(genome_wide_heatmap, reducted_df, 0.05)
 ```
 ---
 
