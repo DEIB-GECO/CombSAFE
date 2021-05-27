@@ -160,11 +160,11 @@ Example:
 
 ### [Optional] Add custom tracks
 
-```combsafe.download_custom_tracks(custom_tracks_link)```<br/>
+```combsafe.download_custom_tracks(custom_tracks_url)```<br/>
 Download custom tracks of static genomic elements from URL (e.g., UCSC) in the ./input_files/ folder. <br/>
 
 Parameters: 
-- ***custom_tracks_link***: url
+- ***custom_tracks_url***: url
   - url of custom track to be downloaded
 
 Example:
