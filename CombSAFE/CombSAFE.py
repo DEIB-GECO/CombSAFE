@@ -25,7 +25,7 @@ import random
 import hdbscan
 import itertools
 import subprocess
-#import gmql as gl
+import gmql as gl
 import numpy as np
 import pandas as pd
 import seaborn as sns
