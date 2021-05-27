@@ -940,7 +940,7 @@ def semantic_driven_heatmap(reducted_dataframe):
     get_concat_h(em, hit).save(graphs_path + "semantic_driven_heatmap.jpeg")
     os.remove(graphs_path + "semantic_driven_heatmap_temp.jpeg") 
     
-def gene_ontology_enrichment_analysis(clustered_heatmap, reducted_dataframe, sig_cut_off=0.05):
+def gene_ontology_enrichment_analysis(cluster_indices, reducted_dataframe, significance_cut_off=0.05):
 
     obo_fname = download_go_basic_obo()
     fin_gene2go = download_ncbi_associations()
@@ -963,7 +963,7 @@ def gene_ontology_enrichment_analysis(clustered_heatmap, reducted_dataframe, sig
         background.append(int(id_genes))
     ################################
 
-    indices = clustered_heatmap
+    indices = cluster_indices
     set_of_indices = set(indices)
     set_of_indices -= {-1}
 
