@@ -6,7 +6,7 @@ chromHMM_output = n_states_model + "ChromHMM_output/"
 graphs_path = n_states_model + "graphs/"
 custom = False
 custom_name = ""
-custom_path = ""
+custom_path = "./"
 file_path = "./"
 bed_folder_path = "./"
 
@@ -16,9 +16,11 @@ color_list = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', 
 import os
 import re
 import gzip
+import mygene
+import psutil
 import shutil
 import urllib
-import mygene
+import logging
 import warnings
 import requests
 import random
@@ -28,6 +30,7 @@ import subprocess
 import gmql as gl
 import numpy as np
 import pandas as pd
+from lxml import etree
 import seaborn as sns
 from PIL import Image
 from rpy2 import robjects
@@ -39,20 +42,21 @@ from pyensembl import EnsemblRelease
 from scipy.stats import fisher_exact
 from goatools.obo_parser import GODag
 from scipy.spatial import distance as ssd
-from rpy2.rinterface import RRuntimeWarning
 from scipy.cluster.hierarchy import dendrogram
 from sklearn.metrics import pairwise_distances
 from goatools.base import download_go_basic_obo
 from goatools.base import download_ncbi_associations
 from goatools.anno.genetogo_reader import Gene2GoReader
 from goatools.goea.go_enrichment_ns import GOEnrichmentStudyNS
+from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 from goatools.godag_plot import plot_gos, plot_results, plot_goid2goobj
-import psutil
 
 from Bio import Entrez
 #pyensembl install --release 97 --species homo_sapiens
-warnings.filterwarnings("ignore", category=RRuntimeWarning)
 data = EnsemblRelease(97)
+
+rpy2_logger.setLevel(logging.ERROR)
+
 
 def save_dict_to_file(dic):
     f = open(n_states_model + 'dict.txt','w')
@@ -122,16 +126,33 @@ def download_ontology(url, file_name):
         
 def load_semantic_dataframe(dataset, sep):
     df = pd.read_csv(combsafe_output + "annotations/cell_disease_ontologies.txt", "\t")
-    df1 = df[(df.matched_sentence_1.str.lower() != "cell") & (df.matched_sentence_1.str.lower() != "cells") & (df.matched_sentence_1.str.lower() != "cell, lines cell") & (df.matched_sentence_1.str.lower() != "cell, line cell") & (df.matched_sentence_1.str.lower() != "cell, line: cell") & (df.matched_sentence_1.str.lower() != "cell, line;") & (df.matched_sentence_1.str.lower() != "line cell") & (df.matched_sentence_1.str.lower() != "cells, line;") & (df.matched_sentence_1.str.lower() != "d.;")]
-    df2 = df1.copy()
-    df2['term_name_1'] = df2['term_name_1'].str.replace('cell, ', '')
+    df1 = df[#(df["matched_sentence_1"].str.lower() != "cell, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell lines") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell-line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cells native, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cells;, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cells, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cells cultured, cell line") &
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, d.;") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell  line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cultured cells, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, cell was") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells were") & 
+              #(df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line")  &
+              (df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line, cells were") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells was") & 
+              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") &
+              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") & 
+              (df["matched_sentence_1"].str.lower() != "cells, cultured cells, cell line")]
+
     info_file = pd.read_csv(dataset[0], "\t")
-    onassis_file_f = df2.loc[1:,['sample_id', 'term_name_1', 'term_name_2']]
+    onassis_file_f = df1.loc[1:,['sample_id', 'term_name_1', 'term_name_2']]
     onassis_file_f.columns = ['GSMID', 'Tissue', 'Disease']
     merged_df = info_file.merge(onassis_file_f, on=['GSMID']).fillna("Unknown")
     merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(", ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
+    merged_df = merged_df[(merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_unknown") & (merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
     merged_df.to_csv(combsafe_output + "annotations/annotation_file.txt", sep="\t", index=False)
-    return(merged_df)
+    return(merged_df)  
 
 
 
@@ -150,7 +171,7 @@ def generate_semantic_annotations(input_path, sep, encode_convert=False):
     download_ontology(cl, "cl.obo")
     doid = "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/main/src/ontology/doid.obo"
     download_ontology(doid, "doid.obo")
-
+    
     robjects.r('''
 
     if (!requireNamespace("BiocManager", quietly = TRUE)){
@@ -158,48 +179,42 @@ def generate_semantic_annotations(input_path, sep, encode_convert=False):
     }
 
     BiocManager::install(c("GEOmetadb","Onassis", "OnassisJavaLibs"), update=FALSE)
-
+    
     library(GEOmetadb)
     library(Onassis)
 
 
     sqlfile <- "GEOmetadb.sqlite"
-    if(!file.exists(paste0('./annotations/GEOmetadb/',sqlfile)))
-        getSQLiteFile("./annotations/GEOmetadb")
+    if(!file.exists(paste0('./CombSAFE_output/annotations/GEOmetadb/',sqlfile)))
+        getSQLiteFile('./CombSAFE_output/annotations/GEOmetadb')
 
 
-    gsms_list <- read.table("./geo_ids_list.txt", col.names = "GSMID")
+    gsms_list <- read.table("geo_ids_list.txt", col.names = "GSMID")
     gsms <- gsms_list$GSMID 
 
-    geo_con <- connectToGEODB(sqliteFilePath='./annotations/GEOmetadb/GEOmetadb.sqlite')
+    geo_con <- connectToGEODB(sqliteFilePath='./CombSAFE_output/annotations/GEOmetadb/GEOmetadb.sqlite')
     gsm_metadata <- dbGetQuery(geo_con, paste0("select * from gsm where gsm in ('", paste(gsms, collapse="','"), "')"))
 
-    cl_obo <- './onassis_output/ontologies/cl.obo'
-    opt <- CMoptions()
-    paramValueIndex(opt) <- 31
+    cl_obo <- './CombSAFE_output/annotations/ontologies/cl.obo'
+    gsm_metadata_f <- gsm_metadata[, c('gsm', 'characteristics_ch1', 'source_name_ch1', 'description')]
 
-    #Adding cell to the source name to find also cell names
-    #gsm_metadata$source_name_ch1[!grepl('cell', tolower(gsm_metadata$source_name_ch1))] <- paste0(gsm_metadata$source_name_ch1[!grepl('cell', tolower(gsm_metadata$source_name_ch1))], ' cell')
-    #gsm_metadata$characteristics_ch1 <- gsub('\\t' , ' ', gsm_metadata$characteristics_ch1)
-    #gsm_metadata$characteristics_ch1 <- gsub(';' , ' ', gsm_metadata$characteristics_ch1)
+    #SearchStrategy = 'CONTIGUOUS_MATCH', StopWords = 'PUBMED', OrderIndependentLookup = 'ON', SynonymType = 'ALL'
 
-    #Annotation of cell lines
-    cell_line_annotations <- annotate(gsm_metadata[, c('gsm', 'source_name_ch1', 'characteristics_ch1'),  ], dictType = 'OBO', dictionary = cl_obo, SearchStrategy = "CONTIGUOUS_MATCH",CaseMatch = "CASE_INSENSITIVE", Stemmer = "PORTER",StopWords = "NONE", OrderIndependentLookup = "OFF",FindAllMatches = "NO", e_synonymtype = "EXACT_ONLY")
-    cell_line_annotations_f <- sim(cell_line_annotations, pairconf='edge_rada_lca')
-    collapsed_cells <- Onassis::collapse(cell_line_annotations_f, 0.7)
+    tissue_annotations <- annotate(gsm_metadata_f, 'OBO', cl_obo, Stemmer = 'BIOLEMMATIZER')
+    tissue_annotations_f <- filterconcepts(tissue_annotations, c('cell', 'tissue', 'disease', 'line', 'cell line', 'cell type', 'line cell', 'cells', 'lines cell'))
+    tissue_annotations_f <- sim(tissue_annotations_f, pairconf='edge_rada_lca')
 
-
-    doid_obo <- './onassis_output/ontologies/doid.obo'
-    #disease_annotations <- annotate(gsm_metadata[, c('gsm', 'source_name_ch1', 'characteristics_ch1'),  ], dictType = 'OBO', dictionary = 'OBO', doid_obo, disease=TRUE)
-    disease_annotations <- annotate(gsm_metadata[, c('gsm', 'source_name_ch1', 'characteristics_ch1'),  ], dictType = 'OBO', dictionary = doid_obo, SearchStrategy = "CONTIGUOUS_MATCH",CaseMatch = "CASE_INSENSITIVE", Stemmer = "PORTER",StopWords = "NONE", OrderIndependentLookup = "OFF",FindAllMatches = "NO", e_synonymtype = "EXACT_ONLY", disease=TRUE)
-    disease_annotations <- filterconcepts(disease_annotations, c('disease'))
+    collapsed_cells <- Onassis::collapse(tissue_annotations_f, 0.7)
+    
+    doid_obo <- './CombSAFE_output/annotations/ontologies/doid.obo'
+    disease_annotations <- annotate(gsm_metadata_f, 'OBO', doid_obo, disease=TRUE)
+    disease_annotations_f <- filterconcepts(disease_annotations, c('disease'))
 
 
-    cell_disease_onassis <- mergeonassis(collapsed_cells, disease_annotations)
-    write.table(entities(cell_disease_onassis), file=combsafe_output + 'annotations/cell_disease_ontologies.txt', col.names=TRUE, row.names=FALSE, sep='\t')
-    write.table(simil(cell_disease_onassis), file=combsafe_output + 'annotations/similarity_matrix.txt',col.names=TRUE, row.names=TRUE, sep='\t')
-
-
+    cell_disease_onassis <- mergeonassis(collapsed_cells, disease_annotations_f)
+    write.table(entities(cell_disease_onassis), file='CombSAFE_output/annotations/cell_disease_ontologies.txt', col.names=TRUE, row.names=FALSE, sep='\t')
+    write.table(simil(cell_disease_onassis), file= 'CombSAFE_output/annotations/similarity_matrix.txt',col.names=TRUE, row.names=TRUE, sep='\t')    
+    
     ''')
 
     for file in os.listdir("./"):
@@ -213,8 +228,34 @@ def generate_semantic_annotations(input_path, sep, encode_convert=False):
 
     
     os.remove("./geo_ids_list.txt")
-    load_semantic_dataframe(input_path, sep)  
+    df = pd.read_csv(combsafe_output + "annotations/cell_disease_ontologies.txt", "\t")
+    df1 = df[#(df["matched_sentence_1"].str.lower() != "cell, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell lines") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell-line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cells native, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cells;, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cells, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cells cultured, cell line") &
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, d.;") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell  line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cultured cells, cell line") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, cell was") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells were") & 
+              #(df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line")  &
+              (df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line, cells were") & 
+              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells was") & 
+              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") &
+              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") & 
+              (df["matched_sentence_1"].str.lower() != "cells, cultured cells, cell line")]
 
+    info_file = pd.read_csv(input_path[0], "\t")
+    onassis_file_f = df1.loc[1:,['sample_id', 'term_name_1', 'term_name_2']]
+    onassis_file_f.columns = ['GSMID', 'Tissue', 'Disease']
+    merged_df = info_file.merge(onassis_file_f, on=['GSMID']).fillna("Unknown")
+    merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(", ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
+    merged_df = merged_df[(merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_unknown") & (merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
+    merged_df.to_csv(combsafe_output + "annotations/annotation_file.txt", sep="\t", index=False)
+    return(merged_df)  
     
     
 def plot_factor_freq(semantic_dataframe, n):
@@ -297,7 +338,6 @@ def get_semantic_annotation_list(semantic_dataframe, factor_list):
 
 def generate_schema(narrow=False):
 
-    from lxml import etree
     data_format = 'narrow' if narrow == True else 'broad' 
     output = combsafe_output + "gdm_metadata/" + data_format + "/schema.xml"
     
@@ -406,7 +446,8 @@ def generate_gdm_format(bed_folder_path):
 
 
 def extract_data(dataset, factor_list):
-    generate_gdm_format(dataset)
+    if not os.path.exists(combsafe_output + 'gdm_metadata/'):
+        generate_gdm_format(dataset)
     global GMQL_output_dir
     GMQL_output_dir = "./CombSAFE_output/"+ "_".join(factor_list) + "_pipeline/"
     broad = gl.load_from_path(local_path= combsafe_output + "gdm_metadata/broad/", parser = gl.parsers.BroadPeakParser())
@@ -418,7 +459,10 @@ def extract_data(dataset, factor_list):
     groups_c = sem_ann.group(meta=['Semantic_Annotation'], meta_aggregates = {'n_samp' : gl.COUNTSAMP()})
     final = groups_c[(groups_c['n_samp'] == len(factor_list))]
     results = final.materialize(GMQL_output_dir)
-            
+    
+def load_extracted_data(pool):
+    global GMQL_output_dir
+    GMQL_output_dir = combsafe_output + "_".join(pool) + "_pipeline" + "/"           
     
 def add_custom_tracks(tracks_label, path_to_custom_tracks, index = 0):
     
@@ -440,22 +484,25 @@ def add_custom_tracks(tracks_label, path_to_custom_tracks, index = 0):
     custom_file = custom_file[custom_file['chr'].str.len() < 6]
     custom_file["strand"] = "+"
 
-    custom_file.to_csv(os.path.join(destination_path, tracks_label + ".bed"), sep="\t", index=False, header=False)  
+    custom_file.to_csv(os.path.join(destination_path, custom_path.split("/")[-1].split(".")[0] + ".bed"), sep="\t", index=False, header=False)  
     
 
 
-def download_custom_tracks(custom_tracks_url):
+def download_custom_tracks(tracks_label, custom_tracks_url):
+    
+    global custom_name
+    custom_name = tracks_label
     
     if not os.path.exists(combsafe_output + "downloaded_files/"):
         os.makedirs(combsafe_output + "downloaded_files/")
 
     # Download archive
 
-    name = custom_tracks_link.split("/")[-1].split(".")[0]
-    custom_file_path = combsafe_output + "downloaded_files/" + custom_tracks_link.split("/")[-1].split(".gz")[0]
+    name = custom_tracks_url.split("/")[-1].split(".")[0]
+    custom_file_path = combsafe_output + "downloaded_files/" + custom_tracks_url.split("/")[-1].split(".gz")[0]
     try:
       # Read the file inside the .gz archive located at url
-      with urllib.request.urlopen(custom_tracks_link) as response:
+      with urllib.request.urlopen(custom_tracks_url) as response:
             with gzip.GzipFile(fileobj=response) as uncompressed:
                 file_content = uncompressed.read()
 
@@ -465,7 +512,7 @@ def download_custom_tracks(custom_tracks_url):
 
     except Exception as e:
         print(e)
-    add_custom_tracks(custom_file_path, index = 1)
+    add_custom_tracks(tracks_label, custom_file_path, index = 1)
     
 
 def segment_files():
@@ -524,7 +571,7 @@ def segment_files():
     
     
     
-def identify_functional_states(ChromHMM_path, number_of_states, n_core):
+def identify_functional_states(chromHMM_path, number_of_states, n_core):
     
     global n_states_model
     n_states_model = GMQL_output_dir + str(number_of_states) + "_state_model/"
@@ -534,7 +581,7 @@ def identify_functional_states(ChromHMM_path, number_of_states, n_core):
     
     binarized_files = GMQL_output_dir + "binarized_files/"
     destination_path = GMQL_output_dir + "bed_directory/"
-    txt_file = GMQL_output_dir + "./cellmarkfiletable.txt"
+    txt_file = GMQL_output_dir + "cellmarkfiletable.txt"
     gmql_output = GMQL_output_dir + "files/"
 
 
@@ -568,10 +615,10 @@ def identify_functional_states(ChromHMM_path, number_of_states, n_core):
             cellmarkfiletable.write(sem_ann + "\t" + custom_name + "\t" +  custom_path.split("/")[-1].split(".")[0] + ".bed" + "\n")        
     cellmarkfiletable.close()
     
-    binarizing = " ".join(['java', '-mx32600M', '-jar', ChromHMM_path + 'ChromHMM.jar', 'BinarizeBed','-peaks', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
+    binarizing = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'BinarizeBed', '-peaks', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
     subprocess.call(binarizing, shell=True)
     
-    learning = " ".join(['java', '-mx32600M', '-jar', ChromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  binarized_files, n_states_model, str(number_of_states), 'hg38'])
+    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  binarized_files, n_states_model, str(number_of_states), 'hg38'])
     subprocess.call(learning, shell=True)
     
     global chromHMM_output
@@ -683,7 +730,7 @@ def single_gene_analysis(functional_states_dataframe, path_to_gene_list_file):
         region = functional_states_dataframe.loc[["chr" + str(gene_data.contig)]].query(f'start >= {str(gene_data.start)} & stop <= {str(gene_data.end)}')
         number_of_states = int(n_states_model.split("/")[3].split("_")[0])    
         gene_coordinates = "chr" + str(gene_data.contig) + ":" + str(f"{gene_data.start:,}") + "-" +  str(f"{gene_data.end:,}")
-        gene_heatmap = sns.clustermap(region, col_cluster='hamming', row_cluster=False, cmap=color_list[0:(number_of_states)], vmin=1, vmax=n_states, xticklabels=True, yticklabels=3, figsize=(10, 25), linewidths=.1)
+        gene_heatmap = sns.clustermap(region, col_cluster='hamming', row_cluster=False, cmap=color_list[0:(number_of_states)], vmin=1, vmax=n_states, xticklabels=True, yticklabels=3, figsize=(10, 35), linewidths=.1)
 
 
         plt.suptitle("Gene: \"" + gene_name + "\"; " + "Coordinates: \"" + gene_coordinates + "\"; " + "Strand: \"" + gene_data.strand + "\"; ", fontsize=18, x=0.55, y=1)
@@ -1056,3 +1103,5 @@ def gene_ontology_enrichment_analysis(cluster_indices, reducted_dataframe, signi
     for ont in os.listdir("./"):
         if "go" in ont:
             os.remove(ont)
+
+            
