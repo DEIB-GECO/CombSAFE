@@ -90,7 +90,7 @@ Parameters:
 
 Example:
 ```python
->> input_path = import_path("./path_to_files/")
+>> input_path = import_path("./Input_folder/")
 ```
 
 ---
