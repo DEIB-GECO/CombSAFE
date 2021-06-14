@@ -1,4 +1,4 @@
-name: test2
+name: CombSAFE
 channels:
   - r
   - bioconda
@@ -244,4 +244,4 @@ dependencies:
     - widgetsnbextension==3.5.1
     - xlrd==1.2.0
     - xlsxwriter==1.4.3
-prefix: /home/leone/anaconda3/envs/test2
+prefix: /home/leone/anaconda3/envs/CombSAFE
