@@ -57,7 +57,33 @@ In the following, we show how to call the functions implemented to easily perfor
 
 ### Load input files
 ```combsafe.import_path(path)```<br/>
-Load the input path for the analysis.<br/>
+Load the input path for the analysis. Input files must be structured as follows: <br/>
+
+```
+Input_folder/
+|-- Chip_Files/
+|   |-- 1.narrowPeak.bed
+|   |-- 2.broadPeak.bed
+|   |-- 3.narrowPeak.bed
+|   |-- 4.broadPeak.bed
+|   |-- 5.narrowPeak.bed
+|   |-- 6.broadPeak.bed
+|   |-- 7.narrowPeak.bed
+|   |-- ...
+|-- Textual_file.txt
+```
+- `Chip_Files`  a folder containing ChIP-Seq files
+- `Textual_file.txt` a text file containing the following information:
+  - `GSMID`, accession number related to a specific ChIP-Seq sample from GEO database
+  - `Factor`, Transcription Factor or Histone Mark used for the analysis
+  - `File`, Filename of the corresponding ChIP-Seq File in the Chip_Files folder
+
+| GSMID     | Factor   | File             |
+| :---------| :------- | :--------------- |
+| GSM648494 | H3K4me1  | 1.narrowPeak.bed |
+| GSM648495 | H3K4me3  | 2.broadPeak.bed  |
+| GSM575280 | H3K27me3 | 3.narrowPeak.bed |
+| ...       | ...      | ...              |	
 
 Parameters: 
 - ***path***: path object or file-like object   
