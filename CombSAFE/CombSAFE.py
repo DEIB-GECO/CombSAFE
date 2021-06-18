@@ -125,34 +125,14 @@ def download_ontology(url, file_name):
 
         
 def load_semantic_dataframe(dataset, sep):
-    df = pd.read_csv(combsafe_output + "annotations/cell_disease_ontologies.txt", "\t")
-    df1 = df[#(df["matched_sentence_1"].str.lower() != "cell, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell lines") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell-line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cells native, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cells;, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cells, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cells cultured, cell line") &
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, d.;") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell  line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cultured cells, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, cell was") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells were") & 
-              #(df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line")  &
-              (df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line, cells were") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells was") & 
-              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") &
-              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") & 
-              (df["matched_sentence_1"].str.lower() != "cells, cultured cells, cell line")]
-
     info_file = pd.read_csv(dataset[0], "\t")
-    onassis_file_f = df1.loc[1:,['sample_id', 'term_name_1', 'term_name_2']]
+    onassis_file = pd.read_csv(combsafe_output + "annotations/cell_disease_ontologies.txt", "\t")
+    onassis_file_f = onassis_file.loc[1:,['sample_id', 'short_label_1', 'term_name_2']]
     onassis_file_f.columns = ['GSMID', 'Tissue', 'Disease']
     merged_df = info_file.merge(onassis_file_f, on=['GSMID']).fillna("Unknown")
-    merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(", ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
-    merged_df = merged_df[(merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_unknown") & (merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
+    merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(" , ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
     merged_df.to_csv(combsafe_output + "annotations/annotation_file.txt", sep="\t", index=False)
-    return(merged_df)  
+    return (merged_df)
 
 
 
@@ -185,7 +165,7 @@ def generate_semantic_annotations(input_path, sep, encode_convert=False):
 
 
     sqlfile <- "GEOmetadb.sqlite"
-    if(!file.exists(paste0('./CombSAFE_output/annotations/GEOmetadb/',sqlfile)))
+    if(!file.exists(paste0('./CombSAFE_output/annotations/GEOmetadb/', sqlfile)))
         getSQLiteFile('./CombSAFE_output/annotations/GEOmetadb')
 
 
@@ -200,18 +180,18 @@ def generate_semantic_annotations(input_path, sep, encode_convert=False):
 
     #SearchStrategy = 'CONTIGUOUS_MATCH', StopWords = 'PUBMED', OrderIndependentLookup = 'ON', SynonymType = 'ALL'
 
-    tissue_annotations <- annotate(gsm_metadata_f, 'OBO', cl_obo, Stemmer = 'BIOLEMMATIZER')
-    tissue_annotations_f <- filterconcepts(tissue_annotations, c('cell', 'tissue', 'disease', 'line', 'cell line', 'cell type', 'line cell', 'cells', 'lines cell'))
+    tissue_annotations <- annotate(gsm_metadata_f, 'OBO', cl_obo, Stemmer = 'BIOLEMMATIZER')     
+    tissue_annotations_f <- filterconcepts(tissue_annotations, c('cell', 'donor', 'protein', 'tissue','function', 'immunoglobulin complex', 'chromatin', 'Homo sapiens', 'cell', 'organism', 'circulating', 'heterochromatin', 'quality', 'molecule', 'normal', 'group', 'base', 'inhibitor', 'acid', 'time' ,'signaling', 'localization', 'system', 'gene', 'binding', 'affinity', 'chromosome', 'structure', 'Mus musculus', 'Bos taurus', 'oxygen atom', 'atomic nucleus', 'nucleus', 'dforkhead box protein P3', 'mature', 'cell cycle', 'catalytic activity', 'Drosophila melanogaster', 'Drosophila <fruit fly, genus>', 'V(D)J recombination-activating protein 1', 'Mus <mouse', 'genus>', 'Drosophila <fruit fly', 'nutrient', 'cell line cell', 'Homo', 'chromatin', 'organism', 'protein', 'signaling', 'age', 'female', 'sex', 'male', 'undifferentiated', 'size', 'disease', 'viability', 'document', 'cell line', 'cell line lineage', 'cell type'))
     tissue_annotations_f <- sim(tissue_annotations_f, pairconf='edge_rada_lca')
-
+    
     collapsed_cells <- Onassis::collapse(tissue_annotations_f, 0.7)
     
     doid_obo <- './CombSAFE_output/annotations/ontologies/doid.obo'
     disease_annotations <- annotate(gsm_metadata_f, 'OBO', doid_obo, disease=TRUE)
-    disease_annotations_f <- filterconcepts(disease_annotations, c('disease'))
+    disease_annotations <- filterconcepts(disease_annotations, c('disease'))
 
 
-    cell_disease_onassis <- mergeonassis(collapsed_cells, disease_annotations_f)
+    cell_disease_onassis <- mergeonassis(collapsed_cells, disease_annotations)
     write.table(entities(cell_disease_onassis), file='CombSAFE_output/annotations/cell_disease_ontologies.txt', col.names=TRUE, row.names=FALSE, sep='\t')
     write.table(simil(cell_disease_onassis), file= 'CombSAFE_output/annotations/similarity_matrix.txt',col.names=TRUE, row.names=TRUE, sep='\t')    
     
@@ -228,34 +208,15 @@ def generate_semantic_annotations(input_path, sep, encode_convert=False):
 
     
     os.remove("./geo_ids_list.txt")
-    df = pd.read_csv(combsafe_output + "annotations/cell_disease_ontologies.txt", "\t")
-    df1 = df[#(df["matched_sentence_1"].str.lower() != "cell, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell lines") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell-line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cells native, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cells;, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cells, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cells cultured, cell line") &
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, d.;") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell  line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cultured cells, cell line") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, cell was") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells were") & 
-              #(df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line")  &
-              (df["matched_sentence_1"].str.lower() != "cell, cell culture, cell line, cells were") & 
-              (df["matched_sentence_1"].str.lower() != "cell, cell line, cells was") & 
-              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") &
-              (df["matched_sentence_1"].str.lower() != "cells, cell line, cells were") & 
-              (df["matched_sentence_1"].str.lower() != "cells, cultured cells, cell line")]
-
     info_file = pd.read_csv(input_path[0], "\t")
-    onassis_file_f = df1.loc[1:,['sample_id', 'term_name_1', 'term_name_2']]
+    onassis_file = pd.read_csv(combsafe_output + "annotations/cell_disease_ontologies.txt", "\t")
+    onassis_file_f = onassis_file.loc[1:,['sample_id', 'short_label_1', 'term_name_2']]
     onassis_file_f.columns = ['GSMID', 'Tissue', 'Disease']
     merged_df = info_file.merge(onassis_file_f, on=['GSMID']).fillna("Unknown")
-    merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(", ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
-    merged_df = merged_df[(merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_unknown") & (merged_df.Semantic_Annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
+    merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(" , ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
+
     merged_df.to_csv(combsafe_output + "annotations/annotation_file.txt", sep="\t", index=False)
-    return(merged_df)  
+    return merged_df
     
     
 def plot_factor_freq(semantic_dataframe, n):
@@ -295,10 +256,10 @@ def generate_factor_pool(merged_df, n, onlyfactors=False, onlymarks=False):
     cols = ['factor_list', 'n_semantic_annotations']
     lst = []
     for n, comb in enumerate(itertools.combinations((factor if onlyfactors else f_list), n)):
-        selection_test = merged_df[merged_df["Factor"].isin(list(comb))]
-        f_count_test = selection_test.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
-        n_samples_test = f_count_test[f_count_test["Factor"] == len(list(comb))].shape[0]
-        lst.append([", ".join(list(comb)), n_samples_test]) 
+        selection = merged_df[merged_df["Factor"].isin(list(comb))]
+        f_count = selection.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
+        n_samples = f_count[f_count["Factor"] == len(list(comb))].shape[0]
+        lst.append([", ".join(list(comb)), n_samples]) 
     df1 = pd.DataFrame(lst, columns=cols)
     final_df = df1.sort_values(by=['n_semantic_annotations'], ascending=False).reset_index(drop=True).head(10)
     print(tabulate(final_df, headers='keys', tablefmt='psql'))
@@ -313,16 +274,19 @@ def generate_fixed_factor_pool(semantic_dataframe, factor_list, n):
     lst = []
     for n, comb in enumerate(itertools.combinations(clean_set, n - len(factor_list))):
         new = factor_list + list(comb)
-        selection_test = semantic_dataframe[semantic_dataframe["Factor"].isin(new)]
-        f_count_test = selection_test.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
-        n_samples_test = f_count_test[f_count_test["Factor"] == len(new)].shape[0]
-        lst.append([", ".join(new), n_samples_test])
+        selection = semantic_dataframe[(semantic_dataframe.Semantic_Annotation != "lining cell_native cell_secretory cell_000_unknown") & (semantic_dataframe.Semantic_Annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
+        selection_f = selection[selection["Factor"].isin(new)]
+        
+        f_count = selection_f.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
+        n_samples = f_count[f_count["Factor"] == len(new)].shape[0]
+        lst.append([", ".join(new), n_samples])
 
     df1 = pd.DataFrame(lst, columns=cols)
     final_df = df1.sort_values(by=['n_semantic_annotations'], ascending=False).reset_index(drop=True).head(10)
     final_df.index = final_df.index + 1
     print(tabulate(final_df, headers='keys', tablefmt='psql'))
     
+
 
 def get_semantic_annotation_list(semantic_dataframe, factor_list):
     v=[]
@@ -615,10 +579,10 @@ def identify_functional_states(chromHMM_path, number_of_states, n_core):
             cellmarkfiletable.write(sem_ann + "\t" + custom_name + "\t" +  custom_path.split("/")[-1].split(".")[0] + ".bed" + "\n")        
     cellmarkfiletable.close()
     
-    binarizing = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'BinarizeBed', '-peaks', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
+    binarizing = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'BinarizeBed', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
     subprocess.call(binarizing, shell=True)
     
-    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  binarized_files, n_states_model, str(number_of_states), 'hg38'])
+    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  '-r 100', binarized_files, n_states_model, str(number_of_states), 'hg38'])
     subprocess.call(learning, shell=True)
     
     global chromHMM_output
@@ -1094,7 +1058,7 @@ def gene_ontology_enrichment_analysis(cluster_indices, reducted_dataframe, signi
 
             geneids_study = gene_id_
             goea_results_all = goeaobj.run_study(geneids_study, prt=None)
-            goea_results_sig = [r for r in goea_results_all if r.p_fdr_bh < sig_cut_off]
+            goea_results_sig = [r for r in goea_results_all if r.p_fdr_bh < significance_cut_off]
 
             #goeaobj.wr_txt(clusters_path + cluster_name + "_gene_ontology_enrichment_analysis.txt", goea_results_sig)
             goeaobj.wr_xlsx(clusters_path + cluster_name + "_gene_ontology_enrichment_analysis.xlsx", goea_results_sig)
