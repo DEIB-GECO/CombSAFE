@@ -49,8 +49,8 @@ In order to run the ```CombSAFE``` pipeline, please follow the steps below: <br/
 4. Run the ```notebook/Functional_states_analysis.ipynb```
 
 NB: The `pyGMQL` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
-
 NB2: Before using `PyEnsembl`, download and install Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/).
+NB3: For windows users, Visual Studio v.14 or higher is required. Please follow the installation procedure [here](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
 ## Cookbook
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
