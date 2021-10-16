@@ -50,13 +50,55 @@ In order to run the ```CombSAFE``` pipeline, please follow the steps below: <br/
 
 NB: The `pyGMQL` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
 NB2: Before using `PyEnsembl`, download and install Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/). <br/>
-NB3: For windows users, Visual Studio v.14 or higher is required. Please follow the installation procedure [here](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+NB3: For Windows users, Visual Studio v.14 or higher is required. Please follow the installation procedure [here](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
 ## Cookbook
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
 
-### Load input files
-```combsafe.import_path(path)```<br/>
+### Generate input dataset from raw  data
+```combsafe.generate_dataset(sample_list_path, organism, threads=4, from_GEO=False)```<br/>
+Run a ChIP-seq peak calling pipeline from input raw data. Input files must be structured as follows: <br/>
+
+Input_folder/
+|-- Raw_Reads/
+|   |-- 1.rawreads.fastq
+|   |-- 2.rawreads.fastq
+|   |-- 3.rawreads.fastq
+|   |-- 4.rawreads.fastq
+|   |-- 5.rawreads.fastq
+|   |-- 6.rawreads.fastq
+|   |-- 7.rawreads.fastq
+|   |-- ...
+|-- Textual_file.txt
+```
+- `Chip_Files`  a folder containing ChIP-Seq files
+- `Textual_file.txt` a text file containing the following information:
+  - `SampleID`, accession number related to a specific ChIP-Seq sample from GEO database
+  - `Factor`, Transcription Factor or Histone Mark used for the analysis
+  - `Filename`, Filename of the corresponding ChIP-Seq File in the Chip_Files folder
+
+
+Parameters: 
+- ***sample_list_path***: path object or file-like object   
+  - input path folder 
+- ***organism***: string
+  - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn6", "rn7", "danrer10", "danrer11", "dm3", "dm6", "ce10", "ce11", etc...)
+- ***threads***: string, default 4
+  - number of threads for the ChIp-seq pipeline.
+- ***from_GEO***: bool, default False
+  - if True, CombSAFE downloads raw reads and metadata from the GEO web page of the input GEO GSM Ids
+
+Example:
+```python
+>> input_path = generate_dataset("./Input_folder/", assembly="hg38", threads=20, from_GEO=False)
+```
+
+---
+
+
+
+### Load input dataset
+```combsafe.load_dataset(path, assembly)```<br/>
 Load the input path for the analysis. Input files must be structured as follows: <br/>
 
 ```
@@ -90,7 +132,7 @@ Parameters:
 
 Example:
 ```python
->> input_path = import_path("./Input_folder/")
+>> input_path = import_path("./Input_folder/", assembly="hg38")
 ```
 
 ---
