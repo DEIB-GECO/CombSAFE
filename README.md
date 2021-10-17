@@ -122,7 +122,7 @@ Parameters:
 - ***sample_list_path***: path object or file-like object   
   - input path folder 
 - ***organism***: string
-  - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn6", "rn7", "danrer10", "danrer11", "dm3", "dm6", "ce10", "ce11", etc...)
+  - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn7", "danrer11", "dm6", "ce11", etc...)
 - ***threads***: string, default 4
   - number of threads for the ChIp-seq pipeline.
 - ***from_GEO***: bool, default False
