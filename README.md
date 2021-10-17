@@ -57,8 +57,10 @@ In the following, we show how to call the functions implemented to easily perfor
 
 ### Generate input dataset from raw  data
 ```combsafe.generate_dataset(sample_list_path, organism, threads=4, from_GEO=False)```<br/>
-Run a ChIP-seq peak calling pipeline from input raw data. Input files must be structured as follows: <br/>
+Run a ChIP-seq peak calling pipeline from input raw data. <br/><br/>
+For single-end reads Input files must be structured as follows: <br/>
 
+```
 Input_folder/
 |-- Raw_Reads/
 |   |-- 1.rawreads.fastq
@@ -71,12 +73,50 @@ Input_folder/
 |   |-- ...
 |-- Textual_file.txt
 ```
-- `Chip_Files`  a folder containing ChIP-Seq files
+- `Raw_Reads`  a folder containing raw reads in fastq format
 - `Textual_file.txt` a text file containing the following information:
-  - `SampleID`, accession number related to a specific ChIP-Seq sample from GEO database
+  - `Filename`, Filename of the corresponding raw reads file in the Raw_Reads folder
   - `Factor`, Transcription Factor or Histone Mark used for the analysis
-  - `Filename`, Filename of the corresponding ChIP-Seq File in the Chip_Files folder
+  - `Description`, all available iformations of the biological source from which to extract terms for semantic annotations.
 
+E.g.:
+
+| FileName         | Factor   | Description                                                  |
+| :----------------| :------- | :----------------------------------------------------------- |
+| 1.rawreads.fastq | CTCF     | low passage primary melanoma cultures                        |
+| 2.rawreads.fastq | H3K4me3  | Bone marrow mononuclear cells                                |
+| 3.rawreads.fastq | MYC      | human primary monocytes isolated from PBMC of healthy donors |
+| ...              | ...      | ...                                                          |	
+
+For paired-end reads Input files must be structured as follows: <br/> 
+
+```
+Input_folder/
+|-- Raw_Reads/
+|   |-- 1.forward_reads.fastq
+|   |-- 1.reverse_reads.fastq
+|   |-- 2.forward_reads.fastq
+|   |-- 2.reverse_reads.fastq
+|   |-- 3.forward_reads.fastq
+|   |-- 3.reverse_reads.fastq
+|   |-- ...
+|-- Textual_file.txt
+```
+- `Raw_Reads`  a folder containing raw reads in fastq format
+- `Textual_file.txt` a text file containing the following information:
+  - `Filename_1`, Filename of the corresponding forward raw reads file in the Raw_Reads folder
+  - `Filename_2`, Filename of the corresponding reverse raw reads file in the Raw_Reads folder
+  - `Factor`, Transcription Factor or Histone Mark used for the analysis
+  - `Description`, all available informations of the biological source from which to extract terms for semantic annotations.  
+
+E.g.:
+
+| FileName_1            | FileName_2            |Factor    | Description                                                       |
+| :-------------------- | :---------------------|:-------- | :---------------------------------------------------------------- |
+| 1.forward_reads.fastq | 1.reverse_reads.fastq | H3K4me1  | Human embryonic stem cells received from the John Doe laboratory  |
+| 2.forward_reads.fastq | 2.reverse_reads.fastq | H3K4me3  | Nuclei derived from crude preps of adipose tissue                 |
+| 3.forward_reads.fastq | 3.reverse_reads.fastq | H3K27me3 | Monocyte-derived macrophage                                       |
+| ...                   | ...                   |...       | ...                                                               |	
 
 Parameters: 
 - ***sample_list_path***: path object or file-like object   
