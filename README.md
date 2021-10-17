@@ -49,7 +49,7 @@ In order to run the ```CombSAFE``` pipeline, please follow the steps below: <br/
 4. Run the ```notebook/Functional_states_analysis.ipynb```
 
 NB: The `pyGMQL` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
-NB2: Before using `PyEnsembl`, download and install Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/). <br/>
+NB2: The `PyEnsembl` package additionally requires Ensembl data. Please follow the installation procedure [here](https://pypi.org/project/pyensembl/). <br/>
 NB3: For Windows users, Visual Studio v.14 or higher is required. Please follow the installation procedure [here](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
 ## Cookbook
@@ -75,7 +75,7 @@ Input_folder/
 ```
 - `Raw_Reads`  a folder containing raw reads in fastq format
 - `Textual_file.txt` a text file containing the following information:
-  - `Filename`, Filename of the corresponding raw reads file in the Raw_Reads folder
+  - `FileName`, Filename of the corresponding raw reads file in the Raw_Reads folder
   - `Factor`, Transcription Factor or Histone Mark used for the analysis
   - `Description`, all available iformations of the biological source from which to extract terms for semantic annotations.
 
