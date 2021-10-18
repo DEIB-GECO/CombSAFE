@@ -119,7 +119,7 @@ E.g.:
 | ...                   | ...                   |...       | ...                                                               |	
 
 
-If you want to start a functional state analysis on GEO experiments, input files must be structured as follows: <br/>
+If you want to start a functional state analysis on GEO experiments, set the ```from_GEO``` label as True. In that scenario, input files must be structured as follows: <br/>
 
 ```
 Input_folder/
@@ -404,6 +404,19 @@ Example:
 
 ---
 
+###  Distance Metric Heatmap
+
+```combsafe.show_distance_matrix()```<br/>
+Show distance matrix heatmap about functional states generated from the emission parameters file of an HMM model. <br/>
+
+Example:
+```python
+>> show_distance_matrix()
+```
+
+![alt text](https://drive.google.com/uc?export=download&id=1TBzP1xohnIjRwjco5OTeLCEsDI47Xnz-)
+
+---
 
 ### Single-gene analysis
 
@@ -428,6 +441,29 @@ Example:
 
 ---
 
+###  PCA Analysis
+
+```combsafe.show_distance_matrix()```<br/>
+Shows PCA heatmap among semantic annotation for selected components. <br/>
+
+Parameters:
+- ***functional_states_dataframe***: dataframe
+  - dataframe of functional states
+- ***number_of_components***: int
+  -  number of components for the principal component analysis
+ 
+Return:
+- ***loadings***: dataframe
+  - PCA loadings
+
+Example:
+```python
+>> pca_analysis(functional_states_df, 10)
+```
+
+![alt text](https://drive.google.com/uc?export=download&id=1Ph4TnBsxYnlgUUGZ2gYWLNqU7M96QB6L)
+
+---
 
 ### Genome-wide analysis
 ```combsafe.genome_reduction(functional_states_dataframe, threshold)```<br/>
