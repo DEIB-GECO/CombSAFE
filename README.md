@@ -500,7 +500,7 @@ Parameters:
   - minimum number of samples per cluster accepted for the analysis
 
 Return: 
-- ***clustered_dataframe***: array
+- ***clustered_dataframe***: dataframe
   - dataframe of functional states ordered according to the cluster parameters
 
 Example:
@@ -516,9 +516,9 @@ Example:
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 
 Parameters:
-- ***clustered_dataframe***: array
+- ***clustered_dataframe***: dataframe
   - adataframe of functional states ordered according to the cluster parameters
-- ***distance_metric***: dataframe
+- ***distance_metric***: function/string
   - distance metric to use for the data. CombSAFE auto-generate from the input ```emission.txt``` file a special metric ```functional_state_distance``` to weight distances among functional states according to the their function. Alternatively, ```hamming``` distance can be selected
 - ***goea_tool***: str, "great" or "goatool"
   - tool for gene ontology enrichment analysis 
