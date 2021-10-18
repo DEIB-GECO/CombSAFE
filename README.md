@@ -157,7 +157,8 @@ Example:
 
 ### Load input dataset
 ```combsafe.load_dataset(path, assembly, from_GEO=False)```<br/>
-Load the input path for the analysis. Input files must be structured as follows: <br/>
+Load the input path for the analysis. Skip this step if you have already generated the daatset. <br/>
+Input files must be structured as follows: <br/>
 
 ```
 Input_folder/
