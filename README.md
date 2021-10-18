@@ -408,13 +408,14 @@ Parameters:
   - dataframe of functional states
 - ***path_to_gene_list_file***: path
   - path to the gene list file
-- ***distance_metric***: strinh
-  - distance metric to use for the data ("hamming") 
+- ***distance_metric***: function/string
+  - distance metric to use for the data. CombSAFE auto-generate from the input ```emission.txt``` file a special metric ```functional_state_distance``` to weight distances among functional states according to the their function. Alternatively, ```hamming``` distance can be selected
 
 
 Example:
 ```python
->> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt", funtional_states_distance)
+>> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt", distance_metric = funtional_states_distance)
+>> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt", distance_metric = "hamming")
 ```
 ![alt text](https://drive.google.com/uc?export=download&id=1zkj4DhgfR36UiIAM99ohF1byaXojKRNU)
 
@@ -422,58 +423,66 @@ Example:
 
 
 ### Genome-wide analysis
-```combsafe.genome_reduction(functional_states_dataframe)```<br/>
+```combsafe.genome_reduction(functional_states_dataframe, threshold)```<br/>
 Reduce the initial functional state dataframe to visualize the functional states of the various semantic annotations in the form of a heatmap. <br/>
 NB:  the proportions among the functional states are maintained as in the previous dataframe of functional states. <br/>
 
 Parameters:
 - ***functional_states_dataframe***: dataframe
   - dataframe of functional states
-
+- ***threshold***: int
+  -  value adopted to avoid the over-representation of states that are specific for a small subset of the conditions or for one condition only. Select 100 for full representation
+ 
 Return:
 - ***reducted_dataframe***: dataframe
   - reducted dataframe of functional states
  
 Example:
 ```python
->> reducted_df = genome_reduction(functional_states_df)
+>> reducted_df = genome_reduction(functional_states_df, threshold=90)
 ```
 
 
-```combsafe.data_driven_heatmap(reducted_dataframe)```<br/>
+```combsafe.data_driven_heatmap(reducted_df, distance_metric, min_clust_size, min_sampl)```<br/>
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 
 Parameters: 
-- ***reducted_dataframe***: dataframe
+- ***reducted_df***: dataframe
   - reducted dataframe of functional states
-
+- ***distance_metric***: function/string
+  - distance metric to use for the data. CombSAFE auto-generate from the input ```emission.txt``` file a special metric ```functional_state_distance``` to weight distances among functional states according to the their function. Alternatively, ```hamming``` distance can be selected
+- ***min_clust_size***: int
+  - minimum number of clusters accetpted for the analysis
+- ***min_sampl***: int
+  - minimum number of samples per cluster accepted for the analysis
 Return: 
-- ***cluster_indices***: array
-  - array of cluster integer labels for each data sample
+- ***clustered_dataframe***: array
+  - dataframe of functional states ordered according to the cluster parameters
 
 Example:
 ```python
->> genome_wide_heatmap = data_driven_heatmap(reducted_df)
+>> clustered_heatmap = data_driven_heatmap(reducted_df, functional_states_distance, min_clust_size=10, min_sampl=2)
 ```
 ![alt text](https://drive.google.com/uc?export=download&id=1jbyS_WY54SfJtCWQhw9tpiYW8vC2QJ_Q)
 
 ---
 
 
-```combsafe.gene_ontology_enrichment_analysis(cluster_indices, reducted_dataframe, significance_cut_off)```<br/>
+```combsafe.gene_ontology_enrichment_analysis(clustered_dataframe, distance_metric, goea_tool)```<br/>
 Show a genome-wide heatmap with the most significant clusters of genomic regions based on their patterns of functional states. <br/>
 
 Parameters:
-- ***cluster_indices***: array
-  - array of cluster integer labels for each data sample
-- ***reducted_dataframe***: dataframe
-  - reducted dataframe of functional states
-- ***significance_cut_off***: int
-  - threshold for p-value enrichment analysis, default = 0.05
+- ***clustered_dataframe***: array
+  - adataframe of functional states ordered according to the cluster parameters
+- ***distance_metric***: dataframe
+  - distance metric to use for the data. CombSAFE auto-generate from the input ```emission.txt``` file a special metric ```functional_state_distance``` to weight distances among functional states according to the their function. Alternatively, ```hamming``` distance can be selected
+- ***goea_tool***: str, "great" or "goatool"
+  - tool for gene ontology enrichment analysis 
 
 Example:
 ```python
->> gene_ontology_enrichment_analysis(genome_wide_heatmap, reducted_df, 0.05)
+>> gene_ontology_enrichment_analysis(clustered_heatmap, goea_tool = "great", distance_metric=functional_states_distance)
 ```
 ---
+
 
