@@ -79,7 +79,7 @@ rpy2_logger.setLevel(logging.ERROR)
 warnings.filterwarnings('ignore')
 pandas2ri.activate()
 
-def load_dataset(sample_list_path, assembly, from_GEO=False):
+def load_dataset(path, assembly, from_GEO=False):
     
     global file_path
     global bed_folder_path
@@ -123,7 +123,7 @@ def build_reference_index(ref_org):
                 if file.endswith(".bt2"):
                     shutil.move(os.path.abspath(file), ref_path)
 
-def generate_dataset(sample_list_path, organism, threads=4, from_GEO=False):
+def generate_dataset(path, organism, threads=4, from_GEO=False):
     
     n_threads=str(threads)
     build_reference_index(organism)
