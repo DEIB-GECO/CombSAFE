@@ -337,7 +337,7 @@ Returns:
 >> functional_states_df = identify_functional_states(chromhmm_path ="./ChromHMM/", number_of_states = 15, n_core = 20)
 ```
 
-Alternatively, you can load in house generated segmentated files from on other HMM segmentation tool and jump to the next step
+Alternatively, it is possible to load in house segmentated files from an other HMM segmentation tool and jump to the next step
 
 ```combsafe.load_custom_segments(input_segment_dir, num_states)```<br/>
 load functional states files from input path. <br/>
