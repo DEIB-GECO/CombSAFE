@@ -45,7 +45,7 @@ In order to run the ```CombSAFE``` pipeline, please follow the steps below: <br/
 
 1. Install the Anaconda package and environment manager from [here](https://docs.anaconda.com/anaconda/install/)
 2. Load the CombSAFE environment with the command: ```conda env create -f CombSAFE.yml``` <br/>
-3. Activate the CombSAFE environment with the command: ```conda activate CombSAFE```
+3. Activate the CombSAFE environment with the command: ```conda activate CombSAFE``` ONLinux and MAC. On Windows systems digit  ```activate CombSAFE```
 4. Run the ```notebook/Functional_states_analysis.ipynb```
 
 NB: The `pyGMQL` package additionally requires Java. Please follow the installation procedure [here](https://pygmql.readthedocs.io/en/latest/installation.html). <br/>
