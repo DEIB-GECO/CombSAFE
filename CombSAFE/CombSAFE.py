@@ -79,11 +79,15 @@ rpy2_logger.setLevel(logging.ERROR)
 warnings.filterwarnings('ignore')
 pandas2ri.activate()
 
-def load_dataset(path, assembly):
+def load_dataset(sample_list_path, organism, from_GEO=False):
     
     global file_path
     global bed_folder_path
     global organism
+    global custom_description
+    
+    if not from_GEO:
+        custom_description = True
 
     file_path = path + next(os.walk(path))[2][0]
     organism = assembly
@@ -119,7 +123,7 @@ def build_reference_index(ref_org):
                 if file.endswith(".bt2"):
                     shutil.move(os.path.abspath(file), ref_path)
 
-def create_dataset(sample_list_path, organism, threads=4, from_GEO=False):
+def generate_dataset(sample_list_path, organism, threads=4, from_GEO=False):
     
     n_threads=str(threads)
     build_reference_index(organism)
@@ -322,7 +326,7 @@ def create_dataset(sample_list_path, organism, threads=4, from_GEO=False):
                     os.remove(out_dir + files)     
     file.close()
     
-    load_dataset(f"./processed_data/called_peaks/{organism}/")
+    load_dataset(f"./processed_data/called_peaks/{organism}/", organism, from_GEO)
 
 def collapse_annotations(a):
     if a is not None:
@@ -467,7 +471,7 @@ def get_geoids_list(separator="\t", enc_convert=False):
     info_file = pd.read_csv(file_path, sep=separator)
     geo_ids = []
     encode_ids = []
-    ids_list = list(set(info_file.sample_id))
+    ids_list = list(set(info_file.GSMID))
     tot_enc = sum('ENC' in s for s in ids_list)
     for ids in ids_list:
         if enc_convert:
@@ -886,7 +890,7 @@ def identify_functional_states(chromHMM_path, number_of_states, n_core):
     binarizing = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'BinarizeBed', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
     subprocess.call(binarizing, shell=True)
     
-    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  '-r 100', binarized_files, n_states_model, str(number_of_states), 'hg38'])
+    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  '-r 10', binarized_files, n_states_model, str(number_of_states), 'hg38'])
     subprocess.call(learning, shell=True)
     
     global chromHMM_output
@@ -1380,6 +1384,8 @@ def pca_analysis(df, n):
     g = sns.clustermap(map_, cmap="Blues", figsize=(10,5), row_cluster=False)
     g.fig.subplots_adjust(right=0.7)
     g.ax_cbar.set_position((0.1, .2, .03, .4))
+    loadings = pca.components_
+    return(loadings)
     
 def show_distance_matrix():
     distance = load_funct_states_metric()
