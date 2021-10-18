@@ -79,7 +79,7 @@ rpy2_logger.setLevel(logging.ERROR)
 warnings.filterwarnings('ignore')
 pandas2ri.activate()
 
-def load_dataset(sample_list_path, assembly, from_GEO=False):
+def load_dataset(path, assembly, from_GEO=False):
     
     global file_path
     global bed_folder_path
