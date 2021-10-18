@@ -79,7 +79,7 @@ rpy2_logger.setLevel(logging.ERROR)
 warnings.filterwarnings('ignore')
 pandas2ri.activate()
 
-def load_dataset(path, assembly, from_GEO=False):
+def load_dataset(sample_list_path, assembly, from_GEO=False):
     
     global file_path
     global bed_folder_path
@@ -123,7 +123,7 @@ def build_reference_index(ref_org):
                 if file.endswith(".bt2"):
                     shutil.move(os.path.abspath(file), ref_path)
 
-def generate_dataset(path, organism, threads=4, from_GEO=False):
+def generate_dataset(sample_list_path, organism, threads=4, from_GEO=False):
     
     n_threads=str(threads)
     build_reference_index(organism)
@@ -141,7 +141,7 @@ def generate_dataset(path, organism, threads=4, from_GEO=False):
     
     subprocess.call(" ".join(["mkdir", "-p", out_dir]), shell=True)
     file = open(out_dir.split("/peaks")[0] + "/" + organism + ".txt", "w")
-    file.write("SampleID" + "\t" + "Factor" + "\t" + "Filename" + "\n")
+    file.write("sample_id" + "\t" + "factor" + "\t" + "file" + "\n")
     
     for i in range(samples.shape[0]):
         subprocess.call(" ".join(["mkdir", "-p", fasta_folder]), shell=True)
@@ -448,9 +448,9 @@ def generate_semantic_annotations(dataset, ontology_1, ontology_2, disease = Fal
     info_file = pd.read_csv(dataset[0], "\t")
     ontology_file = pd.read_csv(combsafe_output + "annotations/semantic_matrix.txt", "\t")
     ontology_file_f = ontology_file.loc[1:,['sample_id', 'short_label_1', 'term_name_2']]
-    ontology_file_f.columns = ['sample_id', 'Tissue', 'Disease']
+    ontology_file_f.columns = ['sample_id', 'tissue', 'disease']
     merged_df = info_file.merge(ontology_file_f, on=['sample_id']).fillna("NA")
-    merged_df["Semantic_Annotation"] = merged_df['Tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(" , ", "_", regex=True) + "_000_" + merged_df['Disease'].str.lower().replace(', ','_', regex=True)
+    merged_df["semantic_annotation"] = merged_df['tissue'].str.replace(r"[\(\[].*?[\)\]]", "", regex=True).str.rstrip().str.lower().replace(" , ", "_", regex=True) + "_000_" + merged_df['disease'].str.lower().replace(', ','_', regex=True)
     merged_df.to_csv(combsafe_output + "annotations/annotation_matrix.txt", sep="\t", index=False)
     return(merged_df)
 
@@ -471,7 +471,7 @@ def get_geoids_list(separator="\t", enc_convert=False):
     info_file = pd.read_csv(file_path, sep=separator)
     geo_ids = []
     encode_ids = []
-    ids_list = list(set(info_file.GSMID))
+    ids_list = list(set(info_file.sample_id))
     tot_enc = sum('ENC' in s for s in ids_list)
     for ids in ids_list:
         if enc_convert:
@@ -506,9 +506,9 @@ def get_geoids_list(separator="\t", enc_convert=False):
 
 
 def plot_factor_freq(semantic_dataframe, n):
-    factor_frequency = semantic_dataframe['Factor'].value_counts().rename_axis('Factors').reset_index(name='Frequency')
+    factor_frequency = semantic_dataframe['factor'].value_counts().rename_axis('factors').reset_index(name='frequency')
     top_factors = factor_frequency.head(n)
-    new = [tuple(r) for r in top_factors[['Factors', 'Frequency']].values]
+    new = [tuple(r) for r in top_factors[['factors', 'frequency']].values]
 
     new = sorted(new, key=lambda score: score[1], reverse=True) 
     X, Y = zip(*new)    
@@ -530,18 +530,18 @@ def plot_factor_freq(semantic_dataframe, n):
 
 
 def generate_fixed_factor_pool(semantic_dataframe, factor_list, n):
-    factor_frequency = semantic_dataframe['Factor'].value_counts().rename_axis('Factors').reset_index(name='Frequency')
-    f_list = factor_frequency.head(20)['Factors']
+    factor_frequency = semantic_dataframe['factor'].value_counts().rename_axis('factors').reset_index(name='frequency')
+    f_list = factor_frequency.head(20)['factors']
     clean_set = pd.Series(list((set(f_list) - set(factor_list))))
     cols = ['factor_list', 'n_semantic_annotations']
     lst = []
     for n, comb in enumerate(itertools.combinations(clean_set, n - len(factor_list))):
         new = factor_list + list(comb)
-        selection = semantic_dataframe[(semantic_dataframe.Semantic_Annotation != "lining cell_native cell_secretory cell_000_unknown") & (semantic_dataframe.Semantic_Annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
-        selection_f = selection[selection["Factor"].isin(new)]
+        selection = semantic_dataframe[(semantic_dataframe.semantic_annotation != "lining cell_native cell_secretory cell_000_unknown") & (semantic_dataframe.semantic_annotation != "lining cell_native cell_secretory cell_000_breast cancer_cancer")]
+        selection_f = selection[selection["factor"].isin(new)]
         
-        f_count = selection_f.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
-        n_samples = f_count[f_count["Factor"] == len(new)].shape[0]
+        f_count = selection_f.loc[1:, ["semantic_annotation", "factor"]].groupby("semantic_annotation")['factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
+        n_samples = f_count[f_count["factor"] == len(new)].shape[0]
         lst.append([", ".join(new), n_samples])
 
     df1 = pd.DataFrame(lst, columns=cols)
@@ -552,9 +552,9 @@ def generate_fixed_factor_pool(semantic_dataframe, factor_list, n):
 
 def get_semantic_annotation_list(semantic_dataframe, factor_list):
     v=[]
-    selection = semantic_dataframe[semantic_dataframe["Factor"].isin(factor_list)]
-    f_count = selection.loc[1:, ["Semantic_Annotation", "Factor"]].groupby("Semantic_Annotation")['Factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
-    n_samples = f_count[f_count["Factor"] == len(factor_list)]
+    selection = semantic_dataframe[semantic_dataframe["factor"].isin(factor_list)]
+    f_count = selection.loc[1:, ["semantic_annotation", "factor"]].groupby("semantic_annotation")['factor'].apply(lambda x: len(list(np.unique(x)))).to_frame()
+    n_samples = f_count[f_count["factor"] == len(factor_list)]
     n_samples_list = list(n_samples.index)
     for i in range(len(n_samples_list)):
         v.append((str(i+1) + " - " + n_samples_list[i]))
@@ -646,7 +646,7 @@ def generate_gdm_format(dataset):
 
     sample_id = []
     keys = file[0].rstrip().split("\t")
-    index_name = keys.index("File")
+    index_name = keys.index("file")
 
     for i in range(1, len(file)):
         attributes = (file[i].rstrip().split("\t"))
@@ -680,11 +680,11 @@ def extract_data(dataset, factor_list):
 
     broad = gl.load_from_path(local_path="./CombSAFE_output/gdm_metadata/broad/", parser=gl.parsers.BroadPeakParser())
     narrow = gl.load_from_path(local_path="./CombSAFE_output/gdm_metadata/narrow/", parser=gl.parsers.NarrowPeakParser())
-    f_broad = broad[broad['Factor'].isin(factor_list)]
-    f_narrow = narrow[narrow['Factor'].isin(factor_list)]
+    f_broad = broad[broad['factor'].isin(factor_list)]
+    f_narrow = narrow[narrow['factor'].isin(factor_list)]
     full_dataset = f_broad.union(f_narrow, left_name="broad", right_name="narrow")
-    sem_ann = full_dataset.cover(minAcc=1, maxAcc="Any", groupBy=['Semantic_Annotation', 'Factor'])
-    groups_c = sem_ann.group(meta=['Semantic_Annotation'], meta_aggregates = {'n_samp' : gl.COUNTSAMP()})
+    sem_ann = full_dataset.cover(minAcc=1, maxAcc="Any", groupBy=['semantic_annotation', 'factor'])
+    groups_c = sem_ann.group(meta=['semantic_annotation'], meta_aggregates = {'n_samp' : gl.COUNTSAMP()})
     final = groups_c[(groups_c['n_samp'] == len(factor_list))]
     results = final.materialize(GMQL_output_dir)
 
@@ -877,7 +877,7 @@ def identify_functional_states(chromHMM_path, number_of_states, n_core):
             name = file.split(".")[0]
             for line in metafile:
                 key = line.rstrip().split("\t")
-                if key[0] == "Factor" or key[0] == "Semantic_Annotation":
+                if key[0] == "factor" or key[0] == "semantic_annotation":
                     v.append(key[1])
             se.append(v[1])
             cellmarkfiletable.write(v[1] + "\t" + v[0] + "\t" +  name + ".bed" + "\n")            
@@ -890,7 +890,7 @@ def identify_functional_states(chromHMM_path, number_of_states, n_core):
     binarizing = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'BinarizeBed', '-center', './ChromHMM/CHROMSIZES/hg38.txt', destination_path, txt_file, binarized_files])
     subprocess.call(binarizing, shell=True)
     
-    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  '-r 10', binarized_files, n_states_model, str(number_of_states), 'hg38'])
+    learning = " ".join(['java', '-mx32600M', '-jar', chromHMM_path + 'ChromHMM.jar', 'LearnModel', '-p ' + str(n_core),  '-r 100', binarized_files, n_states_model, str(number_of_states), 'hg38'])
     subprocess.call(learning, shell=True)
     
     global chromHMM_output
