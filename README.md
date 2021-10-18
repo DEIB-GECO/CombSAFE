@@ -75,8 +75,8 @@ Input_folder/
 ```
 - `Raw_Reads`  a folder containing raw reads in fastq format
 - `Textual_file.txt` a text file containing the following information:
-  - `FileName`, Filename of the corresponding raw reads file in the Raw_Reads folder
-  - `Factor`, Transcription Factor or Histone Mark used for the analysis
+  - `FileName`, filename of the corresponding raw reads file in the Raw_Reads folder
+  - `Factor`, transcription factor or histone mark used for the analysis
   - `Description`, all available iformations of the biological source from which to extract terms for semantic annotations.
 
 E.g.:
@@ -104,9 +104,9 @@ Input_folder/
 ```
 - `Raw_Reads`  a folder containing raw reads in fastq format
 - `Textual_file.txt` a text file containing the following information:
-  - `Filename_1`, Filename of the corresponding forward raw reads file in the Raw_Reads folder
-  - `Filename_2`, Filename of the corresponding reverse raw reads file in the Raw_Reads folder
-  - `Factor`, Transcription Factor or Histone Mark used for the analysis
+  - `Filename_1`, filename of the corresponding forward raw reads file in the Raw_Reads folder
+  - `Filename_2`, filename of the corresponding reverse raw reads file in the Raw_Reads folder
+  - `Factor`, transcription factor or histone mark used for the analysis
   - `Description`, all available informations of the biological source from which to extract terms for semantic annotations.  
 
 E.g.:
