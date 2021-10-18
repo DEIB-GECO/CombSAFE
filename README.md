@@ -182,12 +182,12 @@ Example:
 Generate semantic annotations about tissue and disease types from the input dataset.<br/>
 
 Parameters:
-- ***dataset*** str
+- ***dataset*** dataset object
   - imported dataset object
 - ***ontology_1***: str
-  - url address of the selected ontology
-- ***ontology_2***: 
-  - if true, encode IDs are searched to be converted to GSM
+  - url address of the first selected ontology
+- ***ontology_2***: str
+  - url address of the second selected ontology
 - ***disease*** bool, default False
   - set True if one of the selected ontologies is involved in disease concepts
 - ***encode_convert*** bool, default False
@@ -325,10 +325,53 @@ Parameters:
 
 Example:
 ```python
->> identify_functional_states(chromhmm_path ="./ChromHMM/", number_of_states = 15, n_core = 20)
+>> functional_states_df = identify_functional_states(chromhmm_path ="./ChromHMM/", number_of_states = 15, n_core = 20)
 ```
 
+Alternatively, you can load in house generated segmentated files from on other HMM segmentation tool and jump to the next step
+
+```combsafe.load_custom_segments(input_segment_dir, num_states)```<br/>
+identification of combinations of static and dynamic functional elements throughout the genome. <br/>
+
+Parameters:
+- ***input_segment_dur***: path
+  - path to the segmentated file folder.
+- ***number_of_states***: int
+  - number of combinations of genomic functional elements
+
+Example:
+```python
+>> functional_states_df = load_custom_segments(input_segment_dir ="./Input_folder/in_house_segmentated/", num_states=15)
+```
+
+Input files must be structured as follows: <br/>
+
+```
+Input_folder/
+|-- Segmentated_Files/
+|   |-- 1.semantic_annotation_15_segments.bed
+|   |-- 2.semantic_annotation_15_segments.bed
+|   |-- 3.semantic_annotation_15_segments.bed
+|   |-- 4.semantic_annotation_15_segments.bed
+|   |-- 5.semantic_annotation_15_segments.bed
+|   |-- 6.semantic_annotation_15_segments.bed
+|   |-- 7.semantic_annotation_15_segments.bed
+|   |-- ...
+|-- emissions.txt
+```
+
+- `Segmentated_Files`  a folder containing raw reads in fastq format
+- `emissions.txt` a text file structured as follows:
+
+| State     | H3K4me3     | POLR2A      |MYC          | H3K27me3    |
+| 1         | 0.093326    | 0.457892    | 0.143540    | 0.924645    |
+| 2         | 0.793153    | 0.658634    | 0.972344    | 0.487613    |
+| 3         | 0.940996    | 0.000234    | 0.243758    | 0.187461    |
+| 4         | 0.143540    | 0.763471    | 0.872346    | 0.104765    |
+| ...       | ...         | ...         |...          | ...         |	
+
 ---
+
 
 ```combsafe.show_emission_graph(custom_palette=colors)```<br/>
 Show emission parameters heatmap of genome functional states combination. <br/>
