@@ -56,7 +56,7 @@ NB3: For Windows users, Visual Studio v.14 or higher is required. Please follow 
 In the following, we show how to call the functions implemented to easily perform the different steps of our ```CombSAFE``` computational method, providing example resuls for some of them. 
 
 ### Generate input dataset from raw  data
-```combsafe.create_dataset(sample_list_path, organism, threads=4, from_GEO=False)```<br/>
+```combsafe.create_dataset(path, organism, threads=4, from_GEO=False)```<br/>
 Run a ChIP-seq peak calling pipeline from input raw data. <br/><br/>
 For single-end reads Input files must be structured as follows: <br/>
 
