@@ -118,6 +118,26 @@ E.g.:
 | 3.forward_reads.fastq | 3.reverse_reads.fastq | H3K27me3 | Monocyte-derived macrophage                                       |
 | ...                   | ...                   |...       | ...                                                               |	
 
+
+If you want to start a functional state analysis on GEO experiments, input files must be structured as follows: <br/>
+
+```
+Input_folder/
+|-- Textual_file.txt
+```
+- `Textual_file.txt` a text file containing the following information:
+  - `GSMID`, Id of the samples on GEO
+  - `Factor`, transcription factor or histone mark used for the analysis
+
+E.g., 
+
+| GSMID     | Factor   | 
+| :---------| :------- | 
+| GSM648494 | H3K4me1  | 
+| GSM648495 | H3K4me3  | 
+| GSM575280 | H3K27me3 | 
+| ...       | ...      |
+
 Parameters: 
 - ***sample_list_path***: path object or file-like object   
   - input path folder 
