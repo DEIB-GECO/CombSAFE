@@ -75,14 +75,14 @@ Input_folder/
 ```
 - `Raw_Reads`  a folder containing raw reads in fastq format
 - `Textual_file.txt` a text file containing the following information:
-  - `FileName`, filename of the corresponding raw reads file in the Raw_Reads folder
-  - `Factor`, transcription factor or histone mark used for the analysis
-  - `Description`, all available iformations of the biological source from which to extract terms for semantic annotations.
+  - `file`, filename of the corresponding raw reads file in the Raw_Reads folder
+  - `factor`, transcription factor or histone mark used for the analysis
+  - `description`, all available iformations of the biological source from which to extract terms for semantic annotations.
 
 E.g.:
 
-| FileName         | Factor   | Description                                                  |
-| :----------------| :------- | :----------------------------------------------------------- |
+| file             | factor   | description                                                  |
+| :--------------- | :------- | :----------------------------------------------------------- |
 | 1.rawreads.fastq | CTCF     | low passage primary melanoma cultures                        |
 | 2.rawreads.fastq | H3K4me3  | Bone marrow mononuclear cells                                |
 | 3.rawreads.fastq | MYC      | human primary monocytes isolated from PBMC of healthy donors |
@@ -104,14 +104,14 @@ Input_folder/
 ```
 - `Raw_Reads`  a folder containing raw reads in fastq format
 - `Textual_file.txt` a text file containing the following information:
-  - `Filename_1`, filename of the corresponding forward raw reads file in the Raw_Reads folder
-  - `Filename_2`, filename of the corresponding reverse raw reads file in the Raw_Reads folder
-  - `Factor`, transcription factor or histone mark used for the analysis
-  - `Description`, all available informations of the biological source from which to extract terms for semantic annotations.  
+  - `file_1`, filename of the corresponding forward raw reads file in the Raw_Reads folder
+  - `file_2`, filename of the corresponding reverse raw reads file in the Raw_Reads folder
+  - `factor`, transcription factor or histone mark used for the analysis
+  - `description`, all available informations of the biological source from which to extract terms for semantic annotations.  
 
 E.g.:
 
-| FileName_1            | FileName_2            |Factor    | Description                                                       |
+| file_1                | file_2                |factor    | description                                                       |
 | :-------------------- | :---------------------|:-------- | :---------------------------------------------------------------- |
 | 1.forward_reads.fastq | 1.reverse_reads.fastq | H3K4me1  | Human embryonic stem cells received from the John Doe laboratory  |
 | 2.forward_reads.fastq | 2.reverse_reads.fastq | H3K4me3  | Nuclei derived from crude preps of adipose tissue                 |
@@ -126,12 +126,12 @@ Input_folder/
 |-- Textual_file.txt
 ```
 - `Textual_file.txt` a text file containing the following information:
-  - `GSMID`, Id of the samples on GEO
-  - `Factor`, transcription factor or histone mark used for the analysis
+  - `sample_id`, Id of the samples on GEO
+  - `factor`, transcription factor or histone mark used for the analysis
 
 E.g., 
 
-| GSMID     | Factor   | 
+| sample_id | factor   | 
 | :---------| :------- | 
 | GSM648494 | H3K4me1  | 
 | GSM648495 | H3K4me3  | 
@@ -174,29 +174,30 @@ Input_folder/
 ```
 - `Chip_Files`  a folder containing ChIP-Seq files
 - `Textual_file.txt` a text file containing the following information:
-  - `File`, filename of the corresponding ChIp-seq file in the Chip_Files folder
-  - `Factor`, Transcription Factor or Histone Mark used for the analysis
-  - `Description`, all available informations of the biological source from which to extract terms for semantic annotations. 
+  - `sample_id`, univolcal id for each sample
+  - `factor`, Transcription Factor or Histone Mark used for the analysis
+  - `file`, filename of the corresponding ChIp-seq file in the Chip_Files folder
+  - `description`, all available informations of the biological source from which to extract terms for semantic annotations. 
 
 E.g.:
 
-| File             | Factor   | Description                                                  |
-| :----------------| :------- | :----------------------------------------------------------- |
-| 1.narrowPeak.bed | CTCF     | low passage primary melanoma cultures                        |
-| 2.narrowPeak.bed | H3K4me3  | Bone marrow mononuclear cells                                |
-| 3.narrowPeak.bed | MYC      | human primary monocytes isolated from PBMC of healthy donors |
-| ...              | ...      | ...                                                          |
+| sample_id    | factor   | file             | description                                                  |
+| :----------  | :------- | :----------------| :----------------------------------------------------------- |
+| 1            | CTCF     | 1.narrowPeak.bed | low passage primary melanoma cultures                        |
+| 2            | H3K4me3  | 2.narrowPeak.bed | Bone marrow mononuclear cells                                |
+| 3            | MYC      | 3.narrowPeak.bed | human primary monocytes isolated from PBMC of healthy donors |
+|              | ...              | ...      | ...                                                          |
 
 
 If your dataset is generate from GEO samples and you want to get the description from the GSM GEO webpage, set the ```from_GEO``` label as True. In that scenario, Textual_file.txt must be structured as follows: <br/>
 
 - `Textual_file.txt` a text file containing the following information:
-  - `GSMID`, Id of the samples on GEO
-  - `Factor`, Transcription Factor or Histone Mark used for the analysis
-  - `File`, filename of the corresponding ChIp-seq file in the Chip_Files folder
+  - `sample_id`, Id of the samples on GEO
+  - `factor`, Transcription Factor or Histone Mark used for the analysis
+  - `file`, filename of the corresponding ChIp-seq file in the Chip_Files folder
 
 
-| GSMID     | Factor   | File             |
+| sample_id | factor   | file             |
 | :---------| :------- | :--------------- |
 | GSM648494 | H3K4me1  | 1.narrowPeak.bed |
 | GSM648495 | H3K4me3  | 2.broadPeak.bed  |
