@@ -130,7 +130,7 @@ Parameters:
 
 Example:
 ```python
->> input_path = generate_dataset("./Input_folder/", assembly="hg38", threads=20, from_GEO=False)
+>> dataset = generate_dataset("./Input_folder/", assembly="hg38", threads=20, from_GEO=False)
 ```
 
 ---
@@ -178,24 +178,29 @@ Example:
 ---
 
 ### Generate semantic annotations
-```combsafe.generate_semantic_annotations(input_path, sep, encode_convert)```<br/>
+```combsafe.generate_semantic_annotations(dataset, ontology_1, ontology_2, disease = False, encode_convert=False)```<br/>
 Generate semantic annotations about tissue and disease types from the input dataset.<br/>
 
 Parameters:
-- ***input_path*** str
-  - path of the input dataset folder
-- ***sep***: str, default '\t'
-  - delimiter to use for the input .txt file
-- ***encode_convert***: bool, default False
+- ***dataset*** str
+  - imported dataset object
+- ***ontology_1***: str
+  - url address of the selected ontology
+- ***ontology_2***: 
   - if true, encode IDs are searched to be converted to GSM
-
+- ***disease*** bool, default False
+  - set True if one of the selected ontologies is involved in disease concepts
+- ***encode_convert*** bool, default False
+  - if true, encode IDs are searched to be converted to GSM
 Returns: 
   - ***semantic_dataframe***
     - dataset of biological conditions from the input metadata
 
 Example:
 ```python
->> semantic_df = generate_semantic_annotations(input_path, sep="\t", encode_convert=True)
+>> ontology_1 = "https://raw.githubusercontent.com/obophenotype/cell-ontology/master/cl-basic.obo"
+>> ontology_2 = "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/main/src/ontology/doid.obo"
+>> semantic_df = generate_semantic_annotations(dataset, ontology_1, ontology_2, disease = True, encode_convert=False)
 ```
 
 ---
