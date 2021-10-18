@@ -155,10 +155,8 @@ Example:
 
 ---
 
-
-
 ### Load input dataset
-```combsafe.load_dataset(path, assembly)```<br/>
+```combsafe.load_dataset(path, assembly, from_GEO=False)```<br/>
 Load the input path for the analysis. Input files must be structured as follows: <br/>
 
 ```
@@ -176,9 +174,27 @@ Input_folder/
 ```
 - `Chip_Files`  a folder containing ChIP-Seq files
 - `Textual_file.txt` a text file containing the following information:
-  - `GSMID`, accession number related to a specific ChIP-Seq sample from GEO database
+  - `File`, filename of the corresponding ChIp-seq file in the Chip_Files folder
   - `Factor`, Transcription Factor or Histone Mark used for the analysis
-  - `File`, Filename of the corresponding ChIP-Seq File in the Chip_Files folder
+  - `Description`, all available informations of the biological source from which to extract terms for semantic annotations. 
+
+E.g.:
+
+| File             | Factor   | Description                                                  |
+| :----------------| :------- | :----------------------------------------------------------- |
+| 1.narrowPeak.bed | CTCF     | low passage primary melanoma cultures                        |
+| 2.narrowPeak.bed | H3K4me3  | Bone marrow mononuclear cells                                |
+| 3.narrowPeak.bed | MYC      | human primary monocytes isolated from PBMC of healthy donors |
+| ...              | ...      | ...                                                          |
+
+
+If your dataset is generate from GEO samples and you want to get the description from the GSM GEO webpage, set the ```from_GEO``` label as True. In that scenario, Textual_file.txt must be structured as follows: <br/>
+
+- `Textual_file.txt` a text file containing the following information:
+  - `GSMID`, Id of the samples on GEO
+  - `Factor`, Transcription Factor or Histone Mark used for the analysis
+  - `File`, filename of the corresponding ChIp-seq file in the Chip_Files folder
+
 
 | GSMID     | Factor   | File             |
 | :---------| :------- | :--------------- |
@@ -188,7 +204,12 @@ Input_folder/
 | ...       | ...      | ...              |	
 
 Parameters: 
-- ***path***: path object or file-like object   
+- ***sample_list_path***: path object or file-like object   
+  - input path folder 
+- ***organism***: string
+  - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn7", "danrer11", "dm6", "ce11", etc...)
+- ***from_GEO***: bool, default False
+  - if True, CombSAFE downloads raw reads and metadata from the GEO web page of the input GEO GSM Ids
 
 Example:
 ```python
