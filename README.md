@@ -300,12 +300,10 @@ Parameters:
   - name of the custom tracks to add for the analysis
 - ***path_to_custom_tracks***: path
   - UCSC path for downloading custom tracks
-- ***index***: int, default=0
-  - column to use for row labels of the DataFrame
 
 Example:
 ```python
->> add_custom_tracks("CpG_Islands", "./input_files/cpgIslandExt.txt", index=1)
+>> add_custom_tracks("CpG_Islands", "./input_files/cpgIslandExt.txt")
 ```
 
 ---
@@ -322,8 +320,11 @@ Parameters:
   - number of combinations of genomic functional elements
 - ***n_core***: int
   - number of cores to use for the analysis
+Returns: 
+  - ***functional_states_dataframe***
+    - dataset of functional states for each biological conditions
 
-Example:
+
 ```python
 >> functional_states_df = identify_functional_states(chromhmm_path ="./ChromHMM/", number_of_states = 15, n_core = 20)
 ```
@@ -338,6 +339,10 @@ Parameters:
   - path to the segmentated file folder.
 - ***number_of_states***: int
   - number of combinations of genomic functional elements
+Returns: 
+  - ***functional_states_dataframe***
+    - dataset of functional states for each biological conditions 
+ 
 
 Example:
 ```python
@@ -390,23 +395,12 @@ Example:
 
 ---
 
-### Load dataframe of functional states
-```combsafe.load_states_dataframe()```<br/>
 
-Return:
-- ***functional_states_dataframe***: dataframe
-  - dataframe of functional states
 
-Example:
-```python
->> functional_states_df = load_functional_states_dataframe()
-```
-
----
 
 ### Single-gene analysis
 
-```combsafe.single_gene_analysis(functional_states_dataframe, path_to_gene_list_file)```<br/>
+```combsafe.single_gene_analysis(functional_states_dataframe, path_to_gene_list_file, distance_metric )```<br/>
 Given a list of gene symbols in a textual file, the heatmap of the functional states of the related genomic regions is shown. <br/>
 
 Parameters:
@@ -414,10 +408,13 @@ Parameters:
   - dataframe of functional states
 - ***path_to_gene_list_file***: path
   - path to the gene list file
+- ***distance_metric***: strinh
+  - distance metric to use for the data ("hamming") 
+
 
 Example:
 ```python
->> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt")
+>> single_gene_analysis(functional_states_df, "path_to_gene_list/gene_list.txt", funtional_states_distance)
 ```
 ![alt text](https://drive.google.com/uc?export=download&id=1zkj4DhgfR36UiIAM99ohF1byaXojKRNU)
 
