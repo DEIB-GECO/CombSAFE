@@ -139,7 +139,7 @@ E.g.,
 | ...       | ...      |
 
 Parameters: 
-- ***sample_list_path***: path object or file-like object   
+- ***path***: path object or file-like object   
   - input path folder 
 - ***organism***: string
   - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn7", "danrer11", "dm6", "ce11", etc...)
@@ -204,7 +204,7 @@ If your dataset is generate from GEO samples and you want to get the description
 | ...       | ...      | ...              |	
 
 Parameters: 
-- ***sample_list_path***: path object or file-like object   
+- ***path***: path object or file-like object   
   - input path folder 
 - ***organism***: string
   - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn7", "danrer11", "dm6", "ce11", etc...)
@@ -213,7 +213,7 @@ Parameters:
 
 Example:
 ```python
->> input_path = import_path("./Input_folder/", assembly="hg38")
+>> input_path = import_path("./Input_folder/", assembly="hg38", from_GEO=True)
 ```
 
 ---
