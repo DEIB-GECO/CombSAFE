@@ -307,6 +307,7 @@ Parameters:
   - number of combinations of genomic functional elements
 - ***n_core***: int
   - number of cores to use for the analysis
+
 Returns: 
   - ***functional_states_dataframe***
     - dataset of functional states for each biological conditions
@@ -326,6 +327,7 @@ Parameters:
   - path to the segmentated file folder.
 - ***number_of_states***: int
   - number of combinations of genomic functional elements
+
 Returns: 
   - ***functional_states_dataframe***
     - dataset of functional states for each biological conditions 
@@ -440,6 +442,7 @@ Parameters:
   - minimum number of clusters accetpted for the analysis
 - ***min_sampl***: int
   - minimum number of samples per cluster accepted for the analysis
+
 Return: 
 - ***clustered_dataframe***: array
   - dataframe of functional states ordered according to the cluster parameters
