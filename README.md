@@ -123,7 +123,7 @@ Parameters:
   - input path folder 
 - ***organism***: string
   - reference genome assembly (e.g., "hg19", "hg38", "mm10", "mm39", "rn7", "danrer11", "dm6", "ce11", etc...)
-- ***threads***: string, default 4
+- ***threads***: int, default 4
   - number of threads for the ChIp-seq pipeline.
 - ***from_GEO***: bool, default False
   - if True, CombSAFE downloads raw reads and metadata from the GEO web page of the input GEO GSM Ids
@@ -192,6 +192,7 @@ Parameters:
   - set True if one of the selected ontologies is involved in disease concepts
 - ***encode_convert*** bool, default False
   - if true, encode IDs are searched to be converted to GSM
+
 Returns: 
   - ***semantic_dataframe***
     - dataset of biological conditions from the input metadata
@@ -210,7 +211,7 @@ Example:
 Vertical barplot of the factor frequency in the input dataset.<br/>
 
 Parameters: 
-- ***semantic_dataframe***: str, default '\t'
+- ***semantic_dataframe***: dataframe
   - dataset of biological conditions from the input metadata
 - ***n***: int
   - number of factors to display in the barplot
@@ -278,20 +279,6 @@ Example:
 
 ### [Optional] Add custom tracks
 
-```combsafe.download_custom_tracks(custom_tracks_url)```<br/>
-Download custom tracks of static genomic elements from URL (e.g., UCSC) in the ./input_files/ folder. <br/>
-
-Parameters: 
-- ***custom_tracks_url***: url
-  - url of custom track to be downloaded
-
-Example:
-```python
->> download_custom_tracks("http://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/cpgIslandExt.txt.gz")
-```
-
----
-
 ```combsafe.add_custom_tracks(tracks_label, path_to_custom_tracks, index)```<br/>
 Add custom tracks of static genomic elements to the analysis (e.g., CpG islands). <br/>
 
@@ -332,10 +319,10 @@ Returns:
 Alternatively, you can load in house generated segmentated files from on other HMM segmentation tool and jump to the next step
 
 ```combsafe.load_custom_segments(input_segment_dir, num_states)```<br/>
-identification of combinations of static and dynamic functional elements throughout the genome. <br/>
+load functional states files from input path. <br/>
 
 Parameters:
-- ***input_segment_dur***: path
+- ***input_segment_dir***: path
   - path to the segmentated file folder.
 - ***number_of_states***: int
   - number of combinations of genomic functional elements
@@ -394,8 +381,6 @@ Example:
 ![alt text](https://drive.google.com/uc?export=download&id=1Kk_vOm5wz_ski-fLvTxB48dhhu9TXcNY)
 
 ---
-
-
 
 
 ### Single-gene analysis
